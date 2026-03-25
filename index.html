@@ -1,1 +1,1488 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+<script>
+    (function() {
+        const isEditMode = window.location.href.includes('/edit/') || window.location.href.includes('/builder');
+        const style = document.createElement('style');
+        
+        if (!isEditMode) {
+            style.innerHTML = `
+                nav.navbar, #saltcorn-navbar, footer.page-footer, .card-header, .card-title { display: none !important; }
+                html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: #f8fafc !important; overflow: hidden !important; }
+                .container, .container-fluid, #page-inner-content, .card, .card-body { padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; height: 100% !important; border: none !important; box-shadow: none !important; background: transparent !important; }
+                #g4s-app-root h1, #g4s-app-root h2, #g4s-app-root h3, #g4s-app-root h4 { display: block !important; }
+                #g4s-app-root { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 999999 !important; background-color: #f8fafc !important; }
+            `;
+        } else {
+            style.innerHTML = `
+                #g4s-app-root { position: relative !important; width: 100%; height: 700px; border: 4px dashed #cbd5e1; border-radius: 8px; margin: 20px 0; overflow: hidden; background-color: #f8fafc; z-index: 1; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); }
+                #bottom-nav, .modal-overlay { position: absolute !important; }
+                #g4s-app-root::before { content: 'MODO EDICIÓN - VISTA PREVIA MÓVIL'; position: absolute; top: 0; left: 0; right: 0; background: #cbd5e1; color: #475569; font-size: 10px; font-weight: bold; text-align: center; padding: 2px; z-index: 100; }
+            `;
+        }
+        document.head.appendChild(style);
+    })();
+</script>
+
+<style>
+    /* ================= ESTILOS BASE ================= */
+    #g4s-app-root {
+        --g4s-red: #ea1b24; 
+        --bg-main: #f8fafc;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: var(--bg-main);
+        display: flex; flex-direction: column; overflow: hidden; position: relative; 
+    }
+
+    .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+    #scrollable-content {
+        flex: 1; overflow-y: auto; overflow-x: hidden;
+        -webkit-overflow-scrolling: touch; 
+        padding-bottom: 90px; /* Reducido para mejor visualización en móvil */
+        background-color: #f8fafc;
+    }
+
+    #sidebar {
+        width: 260px; background: white; border-right: 1px solid #e2e8f0;
+        display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; height: 100%;
+    }
+
+    #bottom-nav {
+        display: none; position: absolute; bottom: 0; left: 0; right: 0;
+        background: white; border-top: 1px solid #e2e8f0;
+        justify-content: space-around; align-items: flex-start;
+        height: auto; z-index: 9999; 
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+        padding-top: 10px; padding-bottom: max(15px, env(safe-area-inset-bottom)); 
+    }
+
+    .bottom-nav-item {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; 
+        height: auto; color: #94a3b8; font-size: 10px; font-weight: 600;
+        cursor: pointer; transition: all 0.2s; margin-bottom: 5px;
+    }
+    .bottom-nav-item .material-icons { font-size: 26px; margin-bottom: 3px; }
+    .bottom-nav-item.active { color: var(--g4s-red); }
+    .bottom-nav-item.active .material-icons { transform: translateY(-2px); }
+
+    /* RESPONSIVE */
+    .web-only { display: none !important; }
+    #sidebar { display: none; }
+    #bottom-nav { display: flex; }
+    .mobile-header { display: flex; }
+    
+    @media (min-width: 768px) {
+        #sidebar { display: flex; }
+        #bottom-nav { display: none; }
+        .web-only { display: flex !important; }
+        .mobile-only { display: none !important; }
+        .mobile-header { display: none; }
+        #scrollable-content { padding-bottom: 20px; }
+    }
+
+    #main-content { flex: 1; display: flex; flex-direction: column; background-color: #f8fafc; position: relative; overflow: hidden; }
+    
+    .nav-item { padding: 12px 24px; display: flex; align-items: center; color: #64748b; cursor: pointer; border-left: 4px solid transparent; font-size: 14px; transition: 0.2s; text-decoration: none; }
+    .nav-item:hover { background-color: #f1f5f9; }
+    .nav-item.active { background: #fff1f2; color: var(--g4s-red); border-left-color: var(--g4s-red); font-weight: 600; }
+    
+    .btn-g4s { background: linear-gradient(135deg, #ea1b24 0%, #c1151d 100%); color: white; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; border: none; box-shadow: 0 4px 6px rgba(234, 27, 36, 0.2); }
+    .btn-g4s:hover { transform: translateY(-1px); box-shadow: 0 8px 12px rgba(234, 27, 36, 0.25); }
+
+    .fixed-top-section { background-color: #f8fafc; z-index: 30; padding-bottom: 10px; flex-shrink: 0; }
+    #loader { position: absolute; inset: 0; background: rgba(255,255,255,0.98); z-index: 500; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .hidden { display: none !important; }
+    .modal-overlay { position: fixed; inset: 0; z-index: 11000; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+
+    /* ESTILOS TABLAS Y FORMULARIOS AJUSTADOS A MÓVIL */
+    .form-input { width: 100%; padding: 10px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #475569; outline: none; transition: border-color 0.2s; }
+    .form-input:focus { border-color: #cbd5e1; }
+    .form-input:disabled, .form-input[readonly] { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+    .form-label { font-size: 10px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .toggle-group { display: flex; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
+    .toggle-btn { flex: 1; padding: 10px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+    .toggle-btn.active { background-color: #ea1b24; color: white; border-color: #ea1b24; }
+    .toggle-btn.inactive { background-color: white; color: #64748b; }
+    
+    .table-scroll { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow-x: auto; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .g4s-table { width: 100%; border-collapse: collapse; }
+    .g4s-table thead th { background: #f8fafc; color: #475569; font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    .g4s-table tbody td { padding: 12px 16px; font-size: 12px; color: #334155; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+</style>
+
+<div id="g4s-app-root">
+    
+    <div id="modal-local" class="modal-overlay hidden">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-11/12 max-w-lg relative flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-800 uppercase tracking-wide" id="titulo-modal-local">NUEVO LOCAL</h3>
+                <button type="button" onclick="window.cerrarModalLocal()" class="text-gray-400 hover:text-red-500 transition-colors"><span class="material-icons">close</span></button>
+            </div>
+            <form id="form-gestion-local" onsubmit="window.guardarLocalConf(event)" class="space-y-4 overflow-y-auto pr-2">
+                <input type="hidden" id="gl_id">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">NÚMERO LOCAL *</label>
+                    <input type="text" id="gl_numero" required class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 font-bold uppercase text-slate-700">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">RAZÓN SOCIAL *</label>
+                    <input type="text" id="gl_razon" required class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 uppercase">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">PISO</label>
+                    <select id="gl_piso" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 bg-white">
+                        <option value="">Seleccione...</option>
+                        <option value="Piso 1  - Puerta interna Dollar City">Piso 1</option>
+                        <option value="Piso 2">Piso 2</option>
+                        <option value="Piso 3">Piso 3</option>
+                        <option value="Piso 4">Piso 4</option> 
+                        <option value="Piso 5">Piso 5</option>
+                        <option value="Piso 6">Piso 6</option>
+                        <option value="Piso 7">Piso 7</option> 
+                       <option value="Piso Exito">Piso Exito</option>
+                      <option value="Piso 1">Piso 1</option>
+                      <option value="Piso 2">Piso 2</option>
+                      <option value="Piso 3">Piso 3</option>
+                      <option value="Patio Soacha Viejo">Patio Soacha Viejo</option>
+                      <option value="Bulk Training proyecto nemecon">Piso Bulk Training proyecto nemecon </option> 
+                        <option value="Mezanine">Mezanine</option>
+                        <option value="Sotano">Sótano</option>
+
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">HORARIO</label>
+                        <input type="text" id="gl_horario" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: 10am a 08pm">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">DÍAS SEMANA</label>
+                        <input type="text" id="gl_dias" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: Lunes a Sábado">
+                    </div>
+                </div>
+                <div class="pt-3 flex justify-between gap-4 mt-2 border-t border-gray-100">
+                    <button type="button" onclick="window.cerrarModalLocal()" class="flex-1 font-bold text-xs text-gray-600 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">CANCELAR</button>
+                    <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider transition-colors">GUARDAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-imagenes" class="fixed inset-0 bg-slate-900/90 z-[11000] hidden flex flex-col items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden relative">
+            <div class="bg-slate-800 p-3 flex justify-between items-center shrink-0">
+                <span class="text-white font-bold text-xs uppercase flex items-center gap-2"><span class="material-icons text-sm">photo_library</span> Evidencia Fotográfica</span>
+                <button onclick="document.getElementById('modal-imagenes').classList.add('hidden')" class="text-gray-400 hover:text-white bg-slate-700 p-1 rounded-full transition-colors"><span class="material-icons text-sm">close</span></button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-gray-50" id="contenedor-imagenes">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-toast" class="fixed bottom-40 md:bottom-6 right-6 z-[12000] hidden transform transition-all duration-300 translate-y-10 opacity-0">
+        <div class="bg-slate-800 text-white px-5 py-3 rounded-lg shadow-2xl flex items-center gap-3 min-w-[300px]">
+            <div id="toast-icon" class="text-green-400 flex items-center justify-center"><span class="material-icons">check_circle</span></div>
+            <div><h4 id="toast-title" class="font-bold text-sm uppercase">Notificación</h4><p id="toast-msg" class="text-xs text-slate-300">Mensaje</p></div>
+        </div>
+    </div>
+
+    <div id="modal-logout" class="modal-overlay hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-11/12 max-w-sm text-center">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-icons text-3xl text-red-600">power_settings_new</span>
+            </div>
+            <h3 class="text-lg font-black text-slate-800 mb-2">¿Cerrar Sesión?</h3>
+            <p class="text-xs text-gray-500 mb-6 font-medium">Estás a punto de salir de la aplicación. Deberás ingresar tus credenciales nuevamente.</p>
+            <div class="flex gap-3">
+                <button onclick="window.cerrarModal('modal-logout')" class="flex-1 py-3 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 uppercase tracking-wide transition-colors">Cancelar</button>
+                <button onclick="window.realizarLogout()" class="flex-1 py-3 bg-red-600 text-white rounded-xl text-xs font-bold hover:bg-red-700 shadow-lg shadow-red-200 uppercase tracking-wide transition-colors">Sí, Salir</button>
+            </div>
+        </div>
+    </div>
+    <div id="loader" class="hidden">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mb-4"></div>
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Cargando...</p>
+    </div>
+
+    <header class="mobile-header bg-white border-b px-4 py-3 flex justify-between items-center z-40 shadow-sm shrink-0 h-[60px]">
+      <div class="flex items-center gap-3">
+      </div>
+      <button onclick="window.cargarDatosAPI()" class="p-2 text-gray-400 hover:text-red-600 active:bg-gray-100 rounded-full"><span class="material-icons text-xl">sync</span></button>
+    </header>
+
+    <div class="app-layout">
+        <aside id="sidebar">
+            <nav class="mt-4 px-2 space-y-1">
+                <div onclick="window.prepararFormulario('APERTURA', 'apertura')" class="nav-item active rounded-lg" data-target="apertura">
+                    <span class="material-icons text-[20px] mr-3">login</span> Apertura
+                </div>
+                <div onclick="window.prepararFormulario('CIERRE', 'cierre')" class="nav-item rounded-lg" data-target="cierre">
+                    <span class="material-icons text-[20px] mr-3">logout</span> Cierre
+                </div>
+                <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="nav-item rounded-lg" data-target="gestion_locales">
+                    <span class="material-icons text-[20px] mr-3">store</span> Gestión Locales
+                </div>
+                <div onclick="window.navegar('reportes', 'reportes')" class="nav-item rounded-lg" data-target="reportes">
+                    <span class="material-icons text-[20px] mr-3">history</span> Reportes
+                </div>
+            </nav>
+            <div class="p-4 border-t border-gray-100 mt-auto bg-white">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 mr-3">
+                        <span class="material-icons text-sm">person</span>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p id="user-display" class="text-xs text-slate-700 font-bold truncate" data-server-email="{{ user.email }}">Cargando usuario...</p>
+                    </div>
+                </div>
+                <button class="w-full flex items-center text-red-600 font-bold text-xs uppercase hover:bg-red-50 p-2 rounded transition" onclick="window.confirmarLogout()"><span class="material-icons text-sm mr-2">exit_to_app</span> Salir</button>
+            </div>
+        </aside>
+
+        <main id="main-content">
+            <div class="fixed-top-section">
+                </div>
+
+            <div id="scrollable-content" class="p-4 md:p-8 w-full max-w-[96%] mx-auto flex justify-center">
+
+                <section id="sec-formulario" class="g4s-section hidden w-full max-w-2xl mx-auto">
+                    <div class="bg-white rounded-xl md:rounded-[24px] shadow-sm border border-slate-100 p-4 md:p-8">
+                        
+                        <div class="flex items-center gap-4 mb-6">
+                            <button type="button" onclick="window.navegar('reportes', 'reportes')" class="bg-gray-100 p-2 rounded-full text-slate-600 hover:bg-gray-200 transition">
+                                <span class="material-icons text-sm">arrow_back</span>
+                            </button>
+                            <h2 id="form-main-title" class="text-lg md:text-xl font-bold text-slate-800">NUEVO REGISTRO</h2>
+                        </div>
+                        
+                        <form id="form-registro" onsubmit="window.enviarFormulario(event)" class="space-y-3">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                                <div>
+                                    <label class="form-label">SITIO *</label>
+                                    <input type="text" id="SITIO" value="CENTRO COMERCIAL FUNDADORES - PROPIEDAD HORIZONTAL" readonly class="form-input font-bold text-slate-600 text-ellipsis overflow-hidden whitespace-nowrap">
+                                </div>
+                                <div>
+                                    <label class="form-label">ACCIÓN QUE REPORTA *</label>
+                                    <input type="text" id="ACCION" readonly class="form-input font-bold text-red-600">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label">USUARIO REPORTA *</label>
+                                <input type="text" id="USUARIO_ACTUAL" readonly class="form-input bg-gray-100 font-semibold cursor-not-allowed text-ellipsis overflow-hidden whitespace-nowrap">
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                                
+                                <div class="col-span-1 md:col-span-2">
+                                    <div id="contenedor-buscador-local" class="relative">
+                                        <label class="form-label">NÚMERO DEL LOCAL *</label>
+                                        <input type="text" id="BUSCADOR_LOCAL" class="form-input uppercase bg-white cursor-text" placeholder="BUSCAR O SELECCIONAR..." autocomplete="off" required>
+                                        <input type="hidden" id="NUMERO_LOCAL" value="">
+                                        <div id="dropdown-locales" class="hidden absolute z-50 w-full bg-white border border-gray-200 shadow-xl rounded-lg mt-1 max-h-48 overflow-y-auto left-0" style="top: calc(100% - 4px);">
+                                            </div>
+                                    </div>
+                                    
+                                    <div id="info-operativa-local" class="hidden mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4 transition-all duration-300">
+                                        <div class="text-blue-800 font-bold text-xs uppercase flex items-center gap-1 mb-3">
+                                            <span class="material-icons text-sm">info</span> INFORMACIÓN OPERATIVA
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="text-[10px] font-bold text-blue-400 uppercase mb-1">HORARIO</div>
+                                                <div id="info-horario" class="text-xs text-blue-900 font-medium">No registrado</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-[10px] font-bold text-blue-400 uppercase mb-1">DÍAS</div>
+                                                <div id="info-dias" class="text-xs text-blue-900 font-medium">No registrado</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="DIA_SEMANA" value="">
+
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="form-label">REPORTE DE NOVEDAD *</label>
+                                    <input type="hidden" id="NOVEDAD" value="SIN NOVEDAD">
+                                    <div class="toggle-group">
+                                        <button type="button" id="btn-sin-novedad" onclick="window.setNovedad('SIN NOVEDAD')" class="toggle-btn active">SIN NOVEDAD</button>
+                                        <button type="button" id="btn-fuera-horario" onclick="window.setNovedad('FUERA DE HORARIO')" class="toggle-btn inactive border-l border-gray-200">FUERA DE HORARIO</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="seccion-fotos" class="hidden space-y-3 pt-2">
+                                <label id="lbl-foto1" class="w-full h-[100px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors bg-white relative overflow-hidden">
+                                    <span class="material-icons text-gray-400 mb-1" id="icn-foto1">camera_alt</span>
+                                    <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto1">FOTO 01 (OBLIGATORIA)</span>
+                                    <img id="preview-foto1" class="absolute inset-0 w-full h-full object-cover hidden">
+                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.procesarFoto(this, 'foto_1', 'lbl-foto1', 'icn-foto1', 'txt-foto1', 'preview-foto1')">
+                                </label>
+                                
+                                <div class="flex gap-3">
+                                    <label id="lbl-foto2" class="flex-1 h-[80px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors bg-white relative overflow-hidden">
+                                        <span class="material-icons text-gray-400 mb-1" id="icn-foto2">add_a_photo</span>
+                                        <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto2">FOTO 02</span>
+                                        <img id="preview-foto2" class="absolute inset-0 w-full h-full object-cover hidden">
+                                        <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.procesarFoto(this, 'foto_2', 'lbl-foto2', 'icn-foto2', 'txt-foto2', 'preview-foto2')">
+                                    </label>
+                                    <label id="lbl-foto3" class="flex-1 h-[80px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors bg-white relative overflow-hidden">
+                                        <span class="material-icons text-gray-400 mb-1" id="icn-foto3">add_a_photo</span>
+                                        <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto3">FOTO 03</span>
+                                        <img id="preview-foto3" class="absolute inset-0 w-full h-full object-cover hidden">
+                                        <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.procesarFoto(this, 'foto_3', 'lbl-foto3', 'icn-foto3', 'txt-foto3', 'preview-foto3')">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label">OBSERVACIONES</label>
+                                <textarea id="OBSERVACIONES" rows="3" class="form-input resize-none" placeholder="Escriba aquí..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="form-label">GPS *</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="GPS" required readonly class="form-input flex-1 font-mono text-xs text-center tracking-wider" placeholder="Cargando ubicación...">
+                                    <button type="button" onclick="window.obtenerGPS()" class="w-[50px] bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition">
+                                        <span class="material-icons">my_location</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 flex gap-3">
+                                <button type="button" onclick="window.navegar('reportes', 'reportes')" class="flex-1 font-bold text-xs text-gray-500 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg">CANCELAR</button>
+                                <button type="submit" class="flex-1 btn-g4s text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider">GUARDAR</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="sec-reportes" class="g4s-section w-full hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight">Reportes de Registros</h2>
+                        
+                        <div class="flex items-center gap-2 flex-wrap justify-end">
+                            <input type="date" id="reportes-fecha-desde" onchange="window.renderizarTablas()" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Desde">
+                            <input type="date" id="reportes-fecha-hasta" onchange="window.renderizarTablas()" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Hasta">
+                            
+                            <button onclick="window.limpiarFiltrosReportes()" class="bg-gray-100 text-slate-600 border border-gray-200 px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-gray-200 transition-colors shadow-sm flex items-center gap-1" title="Limpiar Filtros">
+                                <span class="material-icons text-sm">filter_alt_off</span>
+                            </button>
+
+                            <button onclick="window.descargarExcel('tabla-reportes-gestion', 'Reportes_G4S')" class="bg-green-600 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-green-700 transition-colors shadow-sm flex items-center gap-1">
+                                <span class="material-icons text-sm">table_view</span> <span class="text-xs font-bold uppercase hidden md:inline">Excel</span>
+                            </button>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="mb-4">
+                        <input type="text" id="filtro-reportes-local" onkeyup="window.renderizarTablas()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar por número de local o razón social...">
+                    </div>
+
+                    <div class="table-scroll">
+                        <table class="g4s-table" id="tabla-reportes-gestion">
+                            <thead>
+                                <tr>
+                                    <th>UNICID</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Local</th>
+                                    <th>Razón Social</th>
+                                    <th>Acción</th>
+                                    <th>Novedad</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-historico-body">
+                                <tr><td colspan="8" class="text-center text-gray-400 py-6 italic">Cargando reportes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="sec-gestion_locales" class="g4s-section hidden w-full">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight uppercase italic">Edición Locales</h2>
+                        
+                        <div class="flex items-center gap-2 flex-wrap justify-end">
+                            <button onclick="window.abrirModalLocal()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
+                                <span class="material-icons text-sm">add</span> Nuevo
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="mb-4">
+                        <input type="text" id="filtro-locales" onkeyup="window.filtrarTablaLocales()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar local para editar...">
+                    </div>
+                    <div class="table-scroll" style="min-width: 100%;">
+                        <table class="g4s-table" id="tabla-locales-gestion">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Razón Social</th>
+                                    <th>Piso</th>
+                                    <th>Horario</th>
+                                    <th>Días</th>
+                                    <th class="text-center">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-locales">
+                                <tr><td colspan="6" class="text-center text-gray-400 py-6 italic">Cargando locales...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <div class="h-32 md:hidden"></div>
+            </div>
+        </main>
+    </div>
+
+    <nav id="bottom-nav">
+        <div onclick="window.prepararFormulario('APERTURA', 'apertura')" class="bottom-nav-item active" data-target="apertura">
+            <span class="material-icons">login</span><span>Apertura</span>
+        </div>
+        <div onclick="window.prepararFormulario('CIERRE', 'cierre')" class="bottom-nav-item" data-target="cierre">
+            <span class="material-icons">logout</span><span>Cierre</span>
+        </div>
+        <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="bottom-nav-item" data-target="gestion_locales">
+            <span class="material-icons">store</span><span>Locales</span>
+        </div>
+        <div onclick="window.navegar('reportes', 'reportes')" class="bottom-nav-item" data-target="reportes">
+            <span class="material-icons">history</span><span>Reportes</span>
+        </div>
+    </nav>
+</div>
+
+<script>
+    // ================= CONFIGURACIÓN Y ESTADO GLOBAL =================
+    const API_ROUTE = encodeURI('/api/tb001_001_Apertura de locales'); 
+    const API_LOCALES_ROUTE = encodeURI('/api/tb_config_locales'); 
+
+    // LISTA DE CORREOS CON PERMISO TOTAL
+    const EMAILS_AUTORIZADOS = [
+        "t3.jorge.posada@co.g4s.com", 
+        "jhoan.gaitan@co.g4s.com",
+        "esteban.chamorro@co.g4s.com"
+    ];
+
+    const localesDefecto = [
+        {numero_local: '101', razon_social: 'TENNIS LONDON', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '181', razon_social: 'WAFFLEMANIA', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo Festivos'},
+        {numero_local: '226', razon_social: 'JOYERIA LUXOR', piso: 'Piso 2', horario: 'A JUEVES DE 10:00 A 20:00; VIERNES Y SADADO 10:00 A 21:00; DOMINGO Y FESTIVOS 11:00', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '226-1', razon_social: 'MIMOS', piso: 'Piso 2', horario: 'No registrado', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '270', razon_social: '270', piso: 'Piso 2', horario: 'Lunes a Sabado de 10:00 a 08:00 Pm; Domingos y Festivos de 11:00 a 08:00 Pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '352', razon_social: 'CINECOLOMBIA', piso: 'Piso 3', horario: 'No registrado', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '413', razon_social: 'HAPPY CITY', piso: 'Piso 4', horario: 'No registrado', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo Festivos'},
+        {numero_local: '9606', razon_social: 'SERJAF', piso: 'Sotano', horario: 'lunes a sábado de 10am a 08pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9610', razon_social: 'MEETRIA ASESORÍA Y CONSULTORÍA', piso: 'Piso 1', horario: 'Lunes a viernes de 08am a 05pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes'},
+        {numero_local: '9802', razon_social: 'LABORATORIO MOVIL CENTER', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9805', razon_social: "COW'S PIZZA", piso: 'Piso 1', horario: 'Lunes a sábados de 10am a 09pm y Domingo y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9826', razon_social: 'MOVILCENTER', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9901', razon_social: 'POPSY', piso: 'Piso 1', horario: 'lunes a domingo de 10 am a 09pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9901', razon_social: 'ALMACENES ÉXITO', piso: 'Piso 1', horario: 'lunes a domingo y festivos de 08am a 09pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9911', razon_social: 'BANCO UNION', piso: 'Piso 1', horario: 'lunes a sábado de 10am a 07pm y domingos y festivos de 11am a 03pm', dias_semana: 'Lunes, Miercoles, Martes, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9929', razon_social: 'VITAL MARKET', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9932', razon_social: 'LEMON SWEET - FUNDADORES', piso: 'Piso 1', horario: 'De Lunes a Sabado de 10am a 9pm Domingos y Festivos de 11am a 8pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: '9933', razon_social: 'VENECIA', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: 'C2 COLUMNA ENTRADA PRINCIPAL', razon_social: 'STAND VALENBROWN', piso: 'Piso 1', horario: 'a Jueves de 10:00 a 20:00; Viernes y Sabado de 10:00 a 21:00; Domingos y Festivos de 11:00 a', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
+        {numero_local: 'ZC-COMERCIO 2', razon_social: 'VALEN BROWN', piso: 'Piso 1', horario: 'A JUEVES 10:00 A 20:00; VIERNES Y SABADO 10:00 A 21:00; DOMINGO Y FESTIVOS DE 11:00', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'}
+    ];
+
+    let registrosData = []; 
+    let localesConfigData = []; 
+    let imagenesBase64 = {};
+    let localEditandoId = null;
+    let buscadorInicializado = false;
+
+    // ================= INICIALIZACIÓN =================
+    function initApp() {
+        window.detectarUsuario(); 
+        window.cargarLocalesConfigAPI(); 
+        window.cargarDatosAPI();
+        window.prepararFormulario('APERTURA', 'apertura');
+        
+        setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener("DOMContentLoaded", initApp);
+    } else {
+        initApp(); 
+    }
+
+    // ================= FUNCIÓN PARA DESCARGAR EXCEL =================
+    window.descargarExcel = function(tableId, filename) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        
+        let csv = '\uFEFF'; 
+        for (let i = 0; i < table.rows.length; i++) {
+            let row = [], cols = table.rows[i].querySelectorAll('td, th');
+            for (let j = 0; j < cols.length; j++) {
+                let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/g, '""');
+                row.push('"' + text + '"');
+            }
+            csv += row.join(';') + '\r\n'; 
+        }
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename + '.csv';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        window.mostrarToast('Éxito', 'Archivo Excel descargado', 'success');
+    }
+
+    // ================= FUNCION PARA OBTENER LOCALES ABIERTOS =================
+    window.obtenerLocalesAbiertos = function() {
+        let localesEstado = {};
+        
+        let historico = [...registrosData].sort((a,b) => new Date(a.datetime||0) - new Date(b.datetime||0));
+        
+        historico.forEach(r => {
+            let num = r.numero_local;
+            let acc = r.accion_que_reporta || r.accionid;
+            if(num && acc) {
+                localesEstado[num.toUpperCase()] = acc.toUpperCase();
+            }
+        });
+        
+        return Object.keys(localesEstado).filter(num => localesEstado[num] === 'APERTURA');
+    }
+
+    // ================= LOGICA DEL BUSCADOR AUTOCOMPLETADO =================
+    window.generarListaBuscador = function() {
+        const dropdown = document.getElementById('dropdown-locales');
+        const inputBuscador = document.getElementById('BUSCADOR_LOCAL');
+        const inputHidden = document.getElementById('NUMERO_LOCAL');
+        const infoBox = document.getElementById('info-operativa-local');
+        const infoHorario = document.getElementById('info-horario');
+        const infoDias = document.getElementById('info-dias');
+
+        if(!dropdown) return;
+        dropdown.innerHTML = '';
+        
+        const accionActual = document.getElementById('ACCION') ? document.getElementById('ACCION').value : '';
+        let localesAMostrar = localesConfigData;
+        
+        if (accionActual === 'CIERRE') {
+            const localesAbiertos = window.obtenerLocalesAbiertos();
+            localesAMostrar = localesConfigData.filter(loc => {
+                let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : '');
+                return localesAbiertos.includes(num.toUpperCase());
+            });
+        }
+
+        let agregados = 0;
+
+        localesAMostrar.forEach(loc => {
+            let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : ''); 
+            let razon = loc.razon_social || '';
+            
+            if (!num || !razon || num === 'No registrado' || razon === 'No registrado') {
+                return; 
+            }
+
+            let text = "";
+            if (num.toUpperCase() !== razon.toUpperCase()) {
+                text = `${num} / ${razon}`;
+            } else {
+                text = `${num}`; 
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'p-3 hover:bg-red-50 cursor-pointer border-b border-gray-50 text-xs font-bold text-slate-700 option-local uppercase transition-colors';
+            div.innerText = text;
+            div.onclick = function() {
+                inputBuscador.value = text;
+                inputHidden.value = num;
+                dropdown.classList.add('hidden');
+                
+                infoHorario.innerText = loc.horario || loc.horarioAtencion || 'No registrado';
+                infoDias.innerText = loc.dias_semana || loc['dias Semana'] || loc.dias || 'No registrado';
+                infoBox.classList.remove('hidden');
+            };
+            dropdown.appendChild(div);
+            agregados++;
+        });
+
+        if (agregados === 0) {
+            const msjVacio = document.createElement('div');
+            msjVacio.id = 'msg-local-vacio';
+            msjVacio.className = 'p-3 text-xs text-gray-400 italic text-center font-bold';
+            msjVacio.innerText = accionActual === 'CIERRE' ? 'NO HAY LOCALES ABIERTOS PARA CERRAR' : 'NO SE ENCONTRARON LOCALES VÁLIDOS';
+            dropdown.appendChild(msjVacio);
+        }
+    }
+
+    window.inicializarBuscadorLocales = function() {
+        window.generarListaBuscador();
+
+        if (window.buscadorInicializado) return;
+
+        const dropdown = document.getElementById('dropdown-locales');
+        const inputBuscador = document.getElementById('BUSCADOR_LOCAL');
+        const inputHidden = document.getElementById('NUMERO_LOCAL');
+        const infoBox = document.getElementById('info-operativa-local');
+
+        if(!dropdown || !inputBuscador) return;
+
+        inputBuscador.addEventListener('input', function(e) {
+            const val = e.target.value.toUpperCase();
+            inputHidden.value = ''; 
+            infoBox.classList.add('hidden'); 
+            dropdown.classList.remove('hidden');
+            
+            let countVisible = 0;
+            const options = dropdown.getElementsByClassName('option-local');
+            for(let opt of options) {
+                if(opt.innerText.toUpperCase().includes(val)) {
+                    opt.style.display = 'block';
+                    countVisible++;
+                } else {
+                    opt.style.display = 'none';
+                }
+            }
+            
+            let msjVacio = document.getElementById('msg-local-vacio');
+            if(countVisible === 0) {
+                if(!msjVacio) {
+                    msjVacio = document.createElement('div');
+                    msjVacio.id = 'msg-local-vacio';
+                    msjVacio.className = 'p-3 text-xs text-gray-400 italic text-center font-bold';
+                    msjVacio.innerText = 'NO SE ENCONTRARON LOCALES VÁLIDOS';
+                    dropdown.appendChild(msjVacio);
+                } else {
+                    msjVacio.style.display = 'block';
+                }
+            } else {
+                if(msjVacio) msjVacio.style.display = 'none';
+            }
+        });
+
+        inputBuscador.addEventListener('focus', function() {
+            dropdown.classList.remove('hidden');
+            this.dispatchEvent(new Event('input'));
+        });
+
+        document.addEventListener('click', function(e) {
+            if(!e.target.closest('#contenedor-buscador-local')) {
+                dropdown.classList.add('hidden');
+                if(!inputHidden.value) {
+                    inputBuscador.value = ''; 
+                    infoBox.classList.add('hidden');
+                }
+            }
+        });
+
+        window.buscadorInicializado = true;
+    }
+
+    // ================= LECTURA DE USUARIO Y PERMISOS =================
+    window.detectarUsuario = async function() {
+        const userDisplay = document.getElementById('user-display');
+        const inputFormUser = document.getElementById('USUARIO_ACTUAL');
+        
+        let email = '';
+        if (userDisplay) {
+            let attr = userDisplay.getAttribute('data-server-email');
+            if(attr && attr.includes('@') && !attr.includes('{{')) email = attr;
+        }
+
+        if (!email) {
+            try {
+                const res = await fetch('/auth/profile', { headers: {'Accept': 'application/json'} });
+                if (res.ok) {
+                    const data = await res.json();
+                    email = data.email;
+                } else {
+                    const res2 = await fetch('/auth/profile');
+                    const txt = await res2.text();
+                    const matchEmail = txt.match(/name="email"[^>]*value="([^"]+)"/i);
+                    if (matchEmail) email = matchEmail[1];
+                }
+            } catch(e) {}
+        }
+        
+        const finalUser = email ? email.toLowerCase().trim() : 'usuario_local';
+        if(userDisplay) userDisplay.innerText = finalUser;
+        if(inputFormUser) inputFormUser.value = finalUser.toUpperCase();
+
+        // LÓGICA DE VISIBILIDAD DE SECCIONES (Modificada para que TODOS tengan permiso)
+        // Se removió el condicional if (!esAdmin) que ocultaba elementos.
+    }
+
+    // ================= NAVEGACIÓN =================
+    window.navegar = function(vista, menuId) {
+        
+        // Se removió el bloque condicional (!esAdmin) para que todos puedan entrar a los reportes.
+
+        document.querySelectorAll('.g4s-section').forEach(s => s.classList.add('hidden'));
+        
+        const secId = (vista === 'apertura' || vista === 'cierre') ? 'formulario' : vista;
+        const sec = document.getElementById('sec-' + secId);
+        if(sec) sec.classList.remove('hidden');
+
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        const sideItem = document.querySelector(`#sidebar .nav-item[data-target="${menuId}"]`);
+        if(sideItem) sideItem.classList.add('active');
+
+        document.querySelectorAll('.bottom-nav-item').forEach(i => { i.classList.remove('active'); i.style.color = '#94a3b8'; });
+        const bottomItem = document.querySelector(`#bottom-nav .bottom-nav-item[data-target="${menuId}"]`);
+        if(bottomItem) { bottomItem.classList.add('active'); bottomItem.style.color = 'var(--g4s-red)'; }
+
+        if (vista === 'reportes') window.cargarDatosAPI(); 
+        if (vista === 'gestion_locales') window.cargarLocalesConfigAPI();
+    };
+
+    // ================= API GESTIÓN DE LOCALES =================
+    window.cargarLocalesConfigAPI = async function() {
+        let mergedLocales = [...localesDefecto];
+
+        try {
+            const res = await fetch(API_LOCALES_ROUTE);
+            if (res.ok) {
+                const data = await res.json();
+                let arr = [];
+                if (Array.isArray(data)) arr = data;
+                else if (data && Array.isArray(data.data)) arr = data.data;
+                else if (data && Array.isArray(data.success)) arr = data.success;
+                else if (data && typeof data === 'object') arr = Object.values(data).filter(v => typeof v === 'object');
+                
+                arr.forEach(dbLoc => {
+                    let dbNum = dbLoc.numero_local || dbLoc.numero || (typeof dbLoc === 'string' ? dbLoc : '');
+                    if(dbNum && !mergedLocales.some(m => m.numero_local === dbNum)) {
+                        mergedLocales.push(dbLoc);
+                    }
+                });
+            } else {
+                let localGuardado = JSON.parse(localStorage.getItem('G4S_LOCALES_CUSTOM') || '[]');
+                localGuardado.forEach(dbLoc => {
+                    let dbNum = dbLoc.numero_local;
+                    if(dbNum && !mergedLocales.some(m => m.numero_local === dbNum)) {
+                        mergedLocales.push(dbLoc);
+                    }
+                });
+            }
+        } catch (e) {
+            let localGuardado = JSON.parse(localStorage.getItem('G4S_LOCALES_CUSTOM') || '[]');
+            localGuardado.forEach(dbLoc => {
+                let dbNum = dbLoc.numero_local;
+                if(dbNum && !mergedLocales.some(m => m.numero_local === dbNum)) {
+                    mergedLocales.push(dbLoc);
+                }
+            });
+        }
+        
+        localesConfigData = mergedLocales;
+        window.renderizarTablaLocales(); 
+        window.inicializarBuscadorLocales(); 
+    }
+
+    window.renderizarTablaLocales = function() {
+        const tBody = document.getElementById('tbody-locales');
+        if(!tBody) return;
+        
+        const filtroTexto = document.getElementById("filtro-locales").value.toUpperCase();
+
+        tBody.innerHTML = '';
+        
+        let localesFiltrados = localesConfigData.filter(loc => {
+            let numero = String(loc.numero_local || '').toUpperCase();
+            let razon = String(loc.razon_social || '').toUpperCase();
+            
+            let cumpleTexto = true;
+            if (filtroTexto) {
+                cumpleTexto = numero.includes(filtroTexto) || razon.includes(filtroTexto);
+            }
+
+            return cumpleTexto;
+        });
+
+        if (localesFiltrados.length === 0) {
+            tBody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-400 py-6 italic">No se encontraron resultados en el buscador.</td></tr>';
+            return;
+        }
+
+        localesFiltrados.forEach((loc, index) => {
+            let numero = typeof loc === 'string' ? loc : (loc.numero_local || '---');
+            let razon = typeof loc === 'string' ? 'Generado automático' : (loc.razon_social || '---');
+            let piso = (typeof loc === 'object' && loc.piso) ? loc.piso : '---';
+            let horario = typeof loc === 'string' ? '---' : (loc.horario || '---');
+            let dias = typeof loc === 'string' ? '---' : (loc.dias_semana || loc.dias || '---');
+            let id = typeof loc === 'string' ? index : (loc.id || index);
+
+            tBody.innerHTML += `
+                <tr class="hover:bg-gray-50 border-b border-gray-100">
+                    <td class="font-bold text-slate-800 py-3">${numero}</td>
+                    <td class="text-xs text-gray-600">${razon}</td>
+                    <td class="text-xs text-slate-700 font-semibold">${piso}</td>
+                    <td class="text-[10px] text-gray-500">${horario}</td>
+                    <td class="text-[10px] text-gray-500" title="${dias}">${dias}</td>
+                    <td class="text-center">
+                        <button type="button" onclick="window.abrirModalLocal('${id}')" class="text-slate-500 bg-slate-100 border border-slate-200 shadow-sm p-1.5 rounded-lg hover:bg-slate-200 active:scale-95 transition-all">
+                            <span class="material-icons text-sm">edit</span>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    window.filtrarTablaLocales = function() {
+        window.renderizarTablaLocales();
+    }
+
+    window.abrirModalLocal = function(id = null) {
+        localEditandoId = id;
+        const form = document.getElementById('form-gestion-local');
+        form.reset();
+        
+        document.getElementById('titulo-modal-local').innerText = id !== null ? "EDITAR LOCAL" : "NUEVO LOCAL";
+
+        if (id !== null) {
+            let loc = localesConfigData.find((l, i) => String(l.id || i) === String(id));
+            if (loc) {
+                if (typeof loc === 'string') {
+                    document.getElementById('gl_numero').value = loc;
+                } else {
+                    document.getElementById('gl_numero').value = loc.numero_local || '';
+                    document.getElementById('gl_razon').value = loc.razon_social || '';
+                    document.getElementById('gl_piso').value = loc.piso || '';
+                    document.getElementById('gl_horario').value = loc.horario || '';
+                    document.getElementById('gl_dias').value = loc.dias_semana || loc.dias || '';
+                }
+            }
+        }
+        
+        document.getElementById('modal-local').classList.remove('hidden');
+    }
+
+    window.cerrarModalLocal = function() {
+        document.getElementById('modal-local').classList.add('hidden');
+    }
+
+    window.guardarLocalConf = async function(e) {
+        e.preventDefault();
+        
+        const payload = {
+            numero_local: document.getElementById('gl_numero').value.toUpperCase(),
+            razon_social: document.getElementById('gl_razon').value.toUpperCase(),
+            piso: document.getElementById('gl_piso').value,
+            horario: document.getElementById('gl_horario').value,
+            dias_semana: document.getElementById('gl_dias').value,
+            created_at: new Date().toISOString() 
+        };
+
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hidden');
+
+        try {
+            const csrfToken = await window.obtenerCsrfToken();
+            let fetchUrl = API_LOCALES_ROUTE;
+            
+            if (localEditandoId !== null && typeof localesConfigData[0] !== 'string') {
+                fetchUrl = `${API_LOCALES_ROUTE}/${localEditandoId}`;
+            }
+
+            const res = await fetch(fetchUrl, {
+                method: 'POST', 
+                headers: { 'Content-Type':'application/json', 'CSRF-Token': csrfToken, 'Accept': 'application/json' }, 
+                body: JSON.stringify(payload)
+            });
+            
+            if(!res.ok) throw new Error('API no encontrada');
+
+            window.mostrarToast('Éxito', 'Local guardado en BD.', 'success');
+        } catch(err) {
+            let guardados = JSON.parse(localStorage.getItem('G4S_LOCALES_CUSTOM') || '[]');
+            
+            if (localEditandoId !== null) {
+                const indexToEdit = localesConfigData.findIndex((l, i) => String(l.id || i) === String(localEditandoId));
+                if(indexToEdit > -1) {
+                    if(typeof localesConfigData[indexToEdit] === 'string') guardados[indexToEdit] = payload;
+                    else guardados[indexToEdit] = {...guardados[indexToEdit], ...payload};
+                }
+            } else {
+                payload.id = Date.now(); 
+                guardados.push(payload);
+            }
+            
+            localStorage.setItem('G4S_LOCALES_CUSTOM', JSON.stringify(guardados));
+            window.mostrarToast('Atención', 'Local guardado offline.', 'warning');
+        } finally {
+            loader.classList.add('hidden');
+            window.cerrarModalLocal();
+            await window.cargarLocalesConfigAPI();
+        }
+    }
+
+    // ================= CARGA DE DATOS Y TABLA HISTORIAL =================
+    window.cargarDatosAPI = async function() {
+        try {
+            const res = await fetch(API_ROUTE);
+            if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+            
+            const data = await res.json();
+            
+            let arr =[];
+            if (Array.isArray(data)) arr = data;
+            else if (data && Array.isArray(data.data)) arr = data.data;
+            else if (data && Array.isArray(data.success)) arr = data.success;
+            else if (data && typeof data === 'object') arr = Object.values(data).filter(v => typeof v === 'object');
+
+            registrosData = arr; 
+            window.renderizarTablas();
+            window.generarListaBuscador(); 
+        } catch (e) {
+            console.error("Error obteniendo datos", e);
+        }
+    }
+
+    window.limpiarFiltrosReportes = function() {
+        const inputDesde = document.getElementById('reportes-fecha-desde');
+        const inputHasta = document.getElementById('reportes-fecha-hasta');
+        const inputFiltroLocal = document.getElementById('filtro-reportes-local');
+
+        if(inputDesde) inputDesde.value = '';
+        if(inputHasta) inputHasta.value = '';
+        if(inputFiltroLocal) inputFiltroLocal.value = '';
+
+        window.renderizarTablas();
+    }
+
+    window.renderizarTablas = function() {
+        const tBody = document.getElementById('tabla-historico-body');
+        if(!tBody) return;
+        tBody.innerHTML = '';
+
+        let fechaDesdeInput = document.getElementById('reportes-fecha-desde') ? document.getElementById('reportes-fecha-desde').value : '';
+        let fechaHastaInput = document.getElementById('reportes-fecha-hasta') ? document.getElementById('reportes-fecha-hasta').value : '';
+        let filtroLocal = document.getElementById('filtro-reportes-local') ? document.getElementById('filtro-reportes-local').value.toUpperCase() : '';
+
+        if (!fechaDesdeInput && !fechaHastaInput && !filtroLocal) {
+            tBody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
+            return;
+        }
+
+        let fechaDesde = fechaDesdeInput;
+        let fechaHasta = fechaHastaInput;
+
+        if (fechaDesde && !fechaHasta) {
+            fechaHasta = fechaDesde;
+        } else if (!fechaDesde && fechaHasta) {
+            fechaDesde = fechaHasta;
+        }
+
+        let todosLosDatos = [...registrosData];
+
+        if (fechaDesde) {
+            todosLosDatos = todosLosDatos.filter(r => new Date(r.datetime) >= new Date(fechaDesde + 'T00:00:00'));
+        }
+        if (fechaHasta) {
+            todosLosDatos = todosLosDatos.filter(r => new Date(r.datetime) <= new Date(fechaHasta + 'T23:59:59'));
+        }
+        if (filtroLocal) {
+            todosLosDatos = todosLosDatos.filter(r => {
+                let numLocal = String(r.numero_local || '').toUpperCase();
+                
+                let razon = r.razon_social;
+                if (!razon) {
+                    const locMatch = localesConfigData.find(l => String(l.numero_local).toUpperCase() === numLocal);
+                    razon = locMatch ? locMatch.razon_social : '';
+                }
+                razon = String(razon || '').toUpperCase();
+
+                return numLocal.includes(filtroLocal) || razon.includes(filtroLocal);
+            });
+        }
+
+        todosLosDatos.sort((a,b) => new Date(b.datetime||0) - new Date(a.datetime||0));
+
+        if (todosLosDatos.length === 0) {
+            tBody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic">No se encontraron resultados para los filtros aplicados.</td></tr>';
+            return;
+        }
+
+        todosLosDatos.forEach(r => {
+            const fechaObj = new Date(r.datetime);
+            const fechaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleDateString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric'});
+            const horaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'});
+            
+            const accionVal = r.accion_que_reporta || r.accionid || '---';
+            const accionEstilo = accionVal === 'APERTURA' 
+                ? 'text-blue-600 bg-blue-100 border border-blue-200' 
+                : 'text-red-600 bg-red-100 border border-red-200';
+
+            const unicId = r.pisoid || r.id || Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, '0');
+            const novedad = r.novedad || 'SIN NOVEDAD';
+            const observaciones = r.observaciones || '---';
+            
+            const numeroLocal = r.numero_local || '---';
+            
+            let razonSocial = r.razon_social;
+            if (!razonSocial) {
+                const locMatch = localesConfigData.find(l => String(l.numero_local).toUpperCase() === String(numeroLocal).toUpperCase());
+                razonSocial = locMatch ? locMatch.razon_social : '---';
+            }
+
+            tBody.innerHTML += `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="text-xs text-gray-500 whitespace-nowrap font-mono uppercase">${unicId}</td>
+                    <td class="text-xs text-gray-500 whitespace-nowrap">${fechaStr}</td>
+                    <td class="text-xs text-gray-500 whitespace-nowrap">${horaStr}</td>
+                    <td class="font-bold text-slate-700 whitespace-nowrap">${numeroLocal}</td>
+                    <td class="text-xs text-slate-600 whitespace-nowrap uppercase">${razonSocial}</td>
+                    <td class="text-[9px] font-black uppercase whitespace-nowrap">
+                        <span class="${accionEstilo} px-2 py-1 rounded-md flex items-center w-max shadow-sm">${accionVal}</span>
+                    </td>
+                    <td class="text-xs text-gray-600 uppercase whitespace-nowrap">${novedad}</td>
+                    <td class="text-xs text-gray-500 max-w-[300px] truncate" title="${observaciones}">${observaciones}</td>
+                </tr>`;
+        });
+    }
+
+    // ================= LÓGICA DEL FORMULARIO Y DÍAS =================
+    window.actualizarInputDias = function() {
+        const seleccionados =[];
+        document.querySelectorAll('.btn-dia.bg-red-600').forEach(b => {
+            seleccionados.push(b.getAttribute('data-val'));
+        });
+        document.getElementById('DIA_SEMANA').value = seleccionados.join(', ');
+    }
+
+    window.seleccionarDia = function(valor, btn) {
+        const contDias = document.getElementById('contenedor-dias');
+        if (contDias && contDias.classList.contains('pointer-events-none')) return;
+
+        if (btn.classList.contains('bg-red-600')) {
+            btn.classList.remove('bg-red-600', 'text-white', 'border-red-600');
+            btn.classList.add('bg-gray-100', 'text-gray-500', 'border-gray-200');
+        } else {
+            btn.classList.remove('bg-gray-100', 'text-gray-500', 'border-gray-200');
+            btn.classList.add('bg-red-600', 'text-white', 'border-red-600');
+        }
+        
+        window.actualizarInputDias();
+    }
+
+    window.seleccionarTodosDias = function() {
+        const contDias = document.getElementById('contenedor-dias');
+        if (contDias && contDias.classList.contains('pointer-events-none')) return;
+        
+        const todosSeleccionados = document.querySelectorAll('.btn-dia.bg-red-600').length === 6;
+
+        document.querySelectorAll('.btn-dia').forEach(btn => {
+            if (todosSeleccionados) {
+                btn.classList.remove('bg-red-600', 'text-white', 'border-red-600');
+                btn.classList.add('bg-gray-100', 'text-gray-500', 'border-gray-200');
+            } else {
+                btn.classList.remove('bg-gray-100', 'text-gray-500', 'border-gray-200');
+                btn.classList.add('bg-red-600', 'text-white', 'border-red-600');
+            }
+        });
+        
+        window.actualizarInputDias();
+    }
+
+    window.prepararFormulario = function(accion, el = null) {
+        window.limpiarFormulario();
+        
+        document.getElementById('form-main-title').innerText = `NUEVO REGISTRO: ${accion}`;
+        document.getElementById('ACCION').value = accion;
+        
+        window.generarListaBuscador();
+
+        const contenedorDias = document.getElementById('contenedor-dias');
+        const btnTodosDias = document.getElementById('btn-todos-dias');
+        const bloqueDias = document.getElementById('bloque-dias-semana');
+
+        if(accion === 'CIERRE') {
+            document.getElementById('BUSCADOR_LOCAL').disabled = false; 
+            
+            if(bloqueDias) bloqueDias.classList.add('hidden');
+
+        } else {
+            document.getElementById('BUSCADOR_LOCAL').disabled = false;
+            
+            if(bloqueDias) bloqueDias.classList.remove('hidden');
+            
+            if (contenedorDias) contenedorDias.classList.remove('pointer-events-none', 'opacity-60');
+            if(btnTodosDias) btnTodosDias.classList.remove('hidden');
+        }
+        
+        window.obtenerGPS();
+        window.navegar(accion.toLowerCase(), el || accion.toLowerCase());
+    }
+
+    window.prepararCierreDesdeHistorial = function(numeroLocal, diasStr) {
+        window.prepararFormulario('CIERRE');
+        
+        const inputLocalHidden = document.getElementById('NUMERO_LOCAL');
+        const inputLocalBuscador = document.getElementById('BUSCADOR_LOCAL');
+        
+        inputLocalHidden.value = numeroLocal;
+        
+        const localEncontrado = localesConfigData.find(l => l.numero_local === numeroLocal);
+        if (localEncontrado) {
+            let num = localEncontrado.numero_local;
+            let razon = localEncontrado.razon_social;
+            let text = (num && razon && num.toUpperCase() !== razon.toUpperCase()) ? `${num} / ${razon}` : (razon || num);
+            
+            inputLocalBuscador.value = text;
+            document.getElementById('info-horario').innerText = localEncontrado.horario || 'No registrado';
+            document.getElementById('info-dias').innerText = localEncontrado.dias_semana || 'No registrado';
+            document.getElementById('info-operativa-local').classList.remove('hidden');
+        } else {
+            inputLocalBuscador.value = numeroLocal;
+        }
+        
+        inputLocalBuscador.disabled = false; 
+
+        document.querySelectorAll('.btn-dia').forEach(b => {
+            b.classList.remove('bg-red-600', 'text-white', 'border-red-600');
+            b.classList.add('bg-gray-100', 'text-gray-500', 'border-gray-200');
+        });
+
+        if(diasStr && diasStr !== '---') {
+            const diasArray = diasStr.split(',').map(d => d.trim());
+            diasArray.forEach(dia => {
+                const btnDia = document.querySelector(`.btn-dia[data-val="${dia}"]`);
+                if(btnDia) {
+                    btnDia.classList.remove('bg-gray-100', 'text-gray-500', 'border-gray-200');
+                    btnDia.classList.add('bg-red-600', 'text-white', 'border-red-600');
+                }
+            });
+            window.actualizarInputDias();
+        }
+        
+        document.getElementById('scrollable-content').scrollTop = 0;
+    }
+
+    window.setNovedad = function(novedad) {
+        document.getElementById('NOVEDAD').value = novedad;
+        
+        const btnSin = document.getElementById('btn-sin-novedad');
+        const btnFuera = document.getElementById('btn-fuera-horario');
+        const seccionFotos = document.getElementById('seccion-fotos');
+
+        if(novedad === 'SIN NOVEDAD') {
+            btnSin.className = 'toggle-btn active';
+            btnFuera.className = 'toggle-btn inactive border-l border-gray-200';
+            seccionFotos.classList.add('hidden');
+        } else {
+            btnFuera.className = 'toggle-btn active';
+            btnSin.className = 'toggle-btn inactive border-r border-gray-200';
+            seccionFotos.classList.remove('hidden');
+        }
+    }
+
+    window.obtenerGPS = function() {
+        const inputGps = document.getElementById('GPS');
+        inputGps.value = "Obteniendo...";
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => { inputGps.value = `${pos.coords.latitude}, ${pos.coords.longitude}`; },
+                err => { 
+                    inputGps.value = ""; 
+                    if(err.code === err.PERMISSION_DENIED) {
+                        window.mostrarToast('Alerta GPS', 'El GPS es un campo obligatorio. Permita la ubicación.', 'error');
+                        alert("El GPS es un caracter obligatorio. Por favor, habilite los permisos de ubicación en su navegador para poder continuar.");
+                    }
+                },
+                { timeout: 10000, maximumAge: 0 }
+            );
+        } else {
+            inputGps.value = "";
+            alert("Geolocalización no soportada en este dispositivo.");
+        }
+    }
+
+    window.procesarFoto = function(input, key, lblId, icnId, txtId, previewId) {
+        if(input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext("2d");
+                    const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+                    let width = img.width; let height = img.height;
+                    
+                    if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+                    else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+                    
+                    canvas.width = width; canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const b64 = canvas.toDataURL("image/jpeg", 0.7);
+                    imagenesBase64[key] = b64;
+                    
+                    const txtElement = document.getElementById(txtId);
+                    const icnElement = document.getElementById(icnId);
+                    if(txtElement) txtElement.style.display = 'none';
+                    if(icnElement) icnElement.style.display = 'none';
+                    
+                    const previewEl = document.getElementById(previewId);
+                    if(previewEl) {
+                        previewEl.src = b64;
+                        previewEl.classList.remove('hidden');
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    window.limpiarFormulario = function() {
+        document.getElementById('form-registro').reset();
+        imagenesBase64 = {}; 
+        window.setNovedad('SIN NOVEDAD');
+        
+        const inputBuscador = document.getElementById('BUSCADOR_LOCAL');
+        if(inputBuscador) {
+            inputBuscador.disabled = false;
+            inputBuscador.value = '';
+        }
+        document.getElementById('NUMERO_LOCAL').value = '';
+        
+        const infoBox = document.getElementById('info-operativa-local');
+        if(infoBox) infoBox.classList.add('hidden');
+        
+        document.getElementById('DIA_SEMANA').value = '';
+        document.querySelectorAll('.btn-dia').forEach(b => {
+            b.classList.remove('bg-red-600', 'text-white', 'border-red-600');
+            b.classList.add('bg-gray-100', 'text-gray-500', 'border-gray-200');
+        });
+        
+        const contenedorDiasLimpiar = document.getElementById('contenedor-dias');
+        if (contenedorDiasLimpiar) contenedorDiasLimpiar.classList.remove('pointer-events-none', 'opacity-60');
+        
+        ['foto1', 'foto2', 'foto3'].forEach((k, i) => {
+            const num = i + 1;
+            const preview = document.getElementById(`preview-foto${num}`);
+            const txtElement = document.getElementById(`txt-foto${num}`);
+            const icnElement = document.getElementById(`icn-foto${num}`);
+            
+            if(preview) {
+                preview.src = '';
+                preview.classList.add('hidden');
+            }
+            if(txtElement) txtElement.style.display = '';
+            if(icnElement) icnElement.style.display = '';
+        });
+
+        window.detectarUsuario();
+    }
+
+    window.base64ToBlob = function(base64, mimeType = 'image/jpeg') {
+        const byteString = atob(base64.split(',')[1]);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+        return new Blob([ab], { type: mimeType });
+    }
+
+    window.obtenerCsrfToken = async function() {
+        if (typeof _sc_globalCsrf !== 'undefined') return _sc_globalCsrf;
+        let tokenDOM = document.querySelector('input[name="_csrf"]')?.value;
+        if (tokenDOM) return tokenDOM;
+        try {
+            const res = await fetch('/auth/profile');
+            const txt = await res.text();
+            const match = txt.match(/name="_csrf"[^>]*value="([^"]+)"/i);
+            if (match && match[1]) return match[1];
+        } catch(e) {}
+        return ''; 
+    }
+
+    window.guardarRegistroAPI = async function(payload) {
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hidden');
+
+        try {
+            const csrfToken = await window.obtenerCsrfToken();
+            
+            const camposImagenes =['foto_local01', 'foto_local02', 'foto_local03'];
+            for (const key of camposImagenes) {
+                if (payload[key] && typeof payload[key] === 'string' && payload[key].startsWith('data:image')) {
+                    try {
+                        const fileName = `local_${key}_${Date.now()}.jpg`;
+                        const blob = window.base64ToBlob(payload[key]);
+                        const folderPath = 'colombia/apps/ap001'; 
+                        
+                        const fileData = new FormData();
+                        fileData.append('file', blob, fileName);
+                        fileData.append('min_role_read', '1');
+                        fileData.append('folder', folderPath);
+
+                        const uploadRes = await fetch('/files/upload', {
+                            method: 'POST',
+                            headers: { 'CSRF-Token': csrfToken, 'Accept': 'application/json' },
+                            body: fileData
+                        });
+
+                        if (uploadRes.ok) {
+                            payload[key] = `${folderPath}/${fileName}`;
+                        } else {
+                            delete payload[key];
+                        }
+                    } catch(imgErr) {
+                        delete payload[key];
+                    }
+                }
+            }
+
+            const res = await fetch(API_ROUTE, {
+                method: 'POST', 
+                headers: { 'Content-Type':'application/json', 'CSRF-Token': csrfToken, 'Accept': 'application/json' }, 
+                body: JSON.stringify(payload)
+            });
+            
+            if(!res.ok) {
+                const errorDB = await res.text();
+                throw new Error(`Detalle del servidor: ${errorDB}`);
+            }
+
+            window.mostrarToast('Éxito', 'Registro guardado correctamente.', 'success');
+            window.navegar('reportes', 'reportes');
+
+        } catch(err) {
+            console.error("Error completo:", err);
+            alert('Fallo al guardar. ' + err.message);
+        } finally {
+            loader.classList.add('hidden');
+        }
+    }
+
+    window.enviarFormulario = function(e) {
+        e.preventDefault();
+
+        const gpsVal = document.getElementById('GPS').value;
+        if(!gpsVal || gpsVal === "Obteniendo..." || gpsVal === "0,0") {
+            window.mostrarToast('Error GPS', 'Debe capturar su ubicación GPS para guardar.', 'error');
+            window.obtenerGPS();
+            return;
+        }
+        
+        const diaSema = document.getElementById('DIA_SEMANA').value;
+        const novedad = document.getElementById('NOVEDAD').value;
+
+        if (novedad === 'FUERA DE HORARIO' && !imagenesBase64['foto_1']) {
+            alert('Atención: La FOTO 01 es obligatoria cuando reportas Fuera de Horario.');
+            return; 
+        }
+
+        const localVal = document.getElementById('NUMERO_LOCAL').value;
+        if (!localVal) {
+            window.mostrarToast('Error', 'Debe seleccionar un Local válido de la lista.', 'error');
+            return;
+        }
+
+        const uniqueIdCalculado = Math.floor(Math.random() * 0xFFFFFFFF).toString(16).padStart(8, '0');
+
+        const payload = {
+            datetime: new Date().toISOString(),
+            cliente: document.getElementById('SITIO').value, 
+            accion_que_reporta: document.getElementById('ACCION').value,
+            accionid: document.getElementById('ACCION').value, 
+            numero_local: localVal.toUpperCase(),
+            quien_informa: document.getElementById('USUARIO_ACTUAL').value,
+            novedad: novedad,
+            observaciones: document.getElementById('OBSERVACIONES').value,
+            gps: String(gpsVal), 
+            pisoid: uniqueIdCalculado, 
+            dia_semana: diaSema 
+        };
+
+        if (imagenesBase64['foto_1']) payload.foto_local01 = imagenesBase64['foto_1'];
+        if (imagenesBase64['foto_2']) payload.foto_local02 = imagenesBase64['foto_2'];
+        if (imagenesBase64['foto_3']) payload.foto_local03 = imagenesBase64['foto_3'];
+
+        window.guardarRegistroAPI(payload);
+    }
+
+    window.mostrarToast = function(titulo, mensaje, tipo = 'success') {
+        const toast = document.getElementById('modal-toast');
+        const titleEl = document.getElementById('toast-title');
+        const msgEl = document.getElementById('toast-msg');
+        const iconEl = document.getElementById('toast-icon');
+
+        titleEl.innerText = titulo;
+        msgEl.innerText = mensaje;
+
+        if (tipo === 'success') {
+            iconEl.innerHTML = '<span class="material-icons">check_circle</span>';
+            iconEl.className = 'text-green-400 flex items-center justify-center';
+        } else if (tipo === 'error') {
+            iconEl.innerHTML = '<span class="material-icons">error</span>';
+            iconEl.className = 'text-red-400 flex items-center justify-center';
+        } else {
+            iconEl.innerHTML = '<span class="material-icons">warning</span>';
+            iconEl.className = 'text-yellow-400 flex items-center justify-center';
+        }
+
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
+
+        setTimeout(() => {
+            toast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(() => toast.classList.add('hidden'), 300);
+        }, 3000);
+    };
+
+    window.confirmarLogout = function() {
+        document.getElementById('modal-logout').classList.remove('hidden');
+    }
+
+    window.cerrarModal = function(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    window.realizarLogout = function() {
+        window.location.href = '/auth/logout';
+    }
+
+    window.verImagenes = function(id) {
+        const registro = registrosData.find(r => String(r.id || r.pisoid) === String(id));
+        if(!registro) return;
+
+        const contenedor = document.getElementById('contenedor-imagenes');
+        contenedor.innerHTML = '';
+
+        const fotos =[registro.foto_local01, registro.foto_local02, registro.foto_local03].filter(Boolean);
+
+        if(fotos.length === 0) {
+            contenedor.innerHTML = '<p class="text-center text-gray-500 text-sm py-4">No hay fotos para este registro.</p>';
+        } else {
+            fotos.forEach((foto, i) => {
+                let src = foto;
+                if (!foto.startsWith('data:image') && !foto.startsWith('http')) {
+                    src = '/files/serve/' + foto.replace(/^\/+/, '');
+                }
+                
+                contenedor.innerHTML += `
+                    <div class="rounded-lg overflow-hidden border border-gray-200 shadow-sm relative bg-white mt-2">
+                        <span class="absolute top-2 left-2 bg-slate-800 text-white text-[9px] font-bold px-2 py-1 rounded opacity-80 z-10">FOTO 0${i+1}</span>
+                        <img src="${src}" class="w-full h-auto object-contain max-h-[300px]" alt="Evidencia ${i+1}">
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('modal-imagenes').classList.remove('hidden');
+    }
+</script>
