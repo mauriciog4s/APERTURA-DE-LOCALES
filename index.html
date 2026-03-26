@@ -69,7 +69,7 @@
         overflow-y: auto; 
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch; 
-        padding-bottom: 20px; /* Ya no hace falta espacio extra porque el menú no tapa nada */
+        padding-bottom: 120px; /* ISSUE 1 CORREGIDO: Aumentado para que el botón de Guardar no quede tapado por el menú/teclado */
         background-color: #f8fafc;
     }
 
@@ -90,8 +90,8 @@
         min-height: 65px; 
         z-index: 9999; 
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-        /* CORRECCIÓN: Sumamos 20px para librar los botones del sistema operativo */
-        padding-bottom: calc(75px + env(safe-area-inset-bottom));
+        /* ISSUE 1 CORREGIDO: Reducido de 75px a 20px para no comerse la pantalla innecesariamente */
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
         padding-top: 8px;
     }
 
@@ -282,7 +282,7 @@
             <div id="scrollable-content" class="p-2 md:p-8 w-full max-w-full md:max-w-[96%] mx-auto flex justify-center">
 
                 <section id="sec-formulario" class="g4s-section hidden w-full max-w-2xl mx-auto">
-                    <div class="bg-white rounded-2xl md:rounded-[24px] shadow-sm border border-slate-100 p-4 md:p-8 w-full">
+                    <div class="bg-white rounded-2xl md:rounded-[24px] shadow-sm border border-slate-100 p-4 md:p-8 w-full mb-10">
                         
                         <div class="flex items-center gap-4 mb-6 md:mb-8">
                             <button type="button" onclick="window.navegar('reportes', 'reportes')" class="bg-gray-100 p-2 rounded-full text-slate-600 hover:bg-gray-200 transition">
@@ -791,7 +791,12 @@
         let mergedLocales = [...localesDefecto];
 
         try {
-            const res = await fetch(API_LOCALES_ROUTE);
+            // ISSUE 2 CORREGIDO: Evitar que los móviles guarden la respuesta de la API en caché
+            const res = await fetch(API_LOCALES_ROUTE, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json', 'Cache-Control': 'no-cache' },
+                cache: 'no-store'
+            });
             if (res.ok) {
                 const data = await res.json();
                 let arr = [];
@@ -915,13 +920,13 @@
     window.guardarLocalConf = async function(e) {
         e.preventDefault();
         
+        // ISSUE 2 CORREGIDO: Eliminamos created_at para no causar rechazo 500 del servidor
         const payload = {
             numero_local: document.getElementById('gl_numero').value.toUpperCase(),
             razon_social: document.getElementById('gl_razon').value.toUpperCase(),
             piso: document.getElementById('gl_piso').value,
             horario: document.getElementById('gl_horario').value,
-            dias_semana: document.getElementById('gl_dias').value,
-            created_at: new Date().toISOString() 
+            dias_semana: document.getElementById('gl_dias').value
         };
 
         const loader = document.getElementById('loader');
@@ -941,10 +946,11 @@
                 body: JSON.stringify(payload)
             });
             
-            if(!res.ok) throw new Error('API no encontrada');
+            if(!res.ok) throw new Error('API rechazó la petición o no encontrada');
 
             window.mostrarToast('Éxito', 'Local guardado en BD.', 'success');
         } catch(err) {
+            console.error("Error al guardar local en BD:", err);
             let guardados = JSON.parse(localStorage.getItem('G4S_LOCALES_CUSTOM') || '[]');
             
             if (localEditandoId !== null) {
@@ -959,7 +965,7 @@
             }
             
             localStorage.setItem('G4S_LOCALES_CUSTOM', JSON.stringify(guardados));
-            window.mostrarToast('Atención', 'Local guardado offline.', 'warning');
+            window.mostrarToast('Atención', 'Local guardado offline. No se sincronizará.', 'warning');
         } finally {
             loader.classList.add('hidden');
             window.cerrarModalLocal();
@@ -970,7 +976,12 @@
     // ================= CARGA DE DATOS Y TABLA HISTORIAL =================
     window.cargarDatosAPI = async function() {
         try {
-            const res = await fetch(API_ROUTE);
+            // ISSUE 2 CORREGIDO: Evitar que el historial se quede pegado por caché
+            const res = await fetch(API_ROUTE, {
+                method: 'GET',
+                headers: { 'Cache-Control': 'no-cache', 'Accept': 'application/json' },
+                cache: 'no-store'
+            });
             if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
             
             const data = await res.json();
