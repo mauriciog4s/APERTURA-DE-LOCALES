@@ -13,12 +13,24 @@
                 html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; background-color: #f8fafc !important; overflow: hidden !important; }
                 .container, .container-fluid, #page-inner-content, .card, .card-body { padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; height: 100% !important; border: none !important; box-shadow: none !important; background: transparent !important; }
                 #g4s-app-root h1, #g4s-app-root h2, #g4s-app-root h3, #g4s-app-root h4 { display: block !important; }
-                #g4s-app-root { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 999999 !important; background-color: #f8fafc !important; }
+                
+                /* ESTRUCTURA FLEX PARA ANCLAR EL MENÚ SIN POSICIONES FLOTANTES */
+                #g4s-app-root { 
+                    position: fixed !important; 
+                    top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; 
+                    width: 100% !important; 
+                    height: 100% !important; /* Salvavidas para navegadores antiguos/WebViews */
+                    height: 100dvh !important; /* Altura dinámica real de la pantalla */
+                    z-index: 999999 !important; 
+                    background-color: #f8fafc !important; 
+                    display: flex !important; 
+                    flex-direction: column !important;
+                }
             `;
         } else {
             style.innerHTML = `
-                #g4s-app-root { position: relative !important; width: 100%; height: 700px; border: 4px dashed #cbd5e1; border-radius: 8px; margin: 20px 0; overflow: hidden; background-color: #f8fafc; z-index: 1; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); }
-                #bottom-nav, .modal-overlay { position: absolute !important; }
+                #g4s-app-root { position: relative !important; width: 100%; height: 700px; border: 4px dashed #cbd5e1; border-radius: 8px; margin: 20px 0; background-color: #f8fafc; z-index: 1; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); display: flex !important; flex-direction: column !important; }
+                .modal-overlay { position: absolute !important; inset: 0; }
                 #g4s-app-root::before { content: 'MODO EDICIÓN - VISTA PREVIA MÓVIL'; position: absolute; top: 0; left: 0; right: 0; background: #cbd5e1; color: #475569; font-size: 10px; font-weight: bold; text-align: center; padding: 2px; z-index: 100; }
             `;
         }
@@ -32,16 +44,32 @@
         --g4s-red: #ea1b24; 
         --bg-main: #f8fafc;
         font-family: 'Segoe UI', sans-serif;
-        background-color: var(--bg-main);
-        display: flex; flex-direction: column; overflow: hidden; position: relative; 
     }
 
-    .app-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+    /* EL LAYOUT SE LLEVA EL ESPACIO QUE SOBRA ENTRE EL HEADER Y EL MENÚ */
+    .app-layout { 
+        display: flex; 
+        flex: 1 1 auto; /* Permite crecer y encogerse correctamente */
+        min-height: 0; /* ¡ESTO ES CLAVE! Evita que el contenido interno rompa el flexbox y empuje el menú */
+        overflow: hidden; 
+        position: relative; 
+        width: 100%;
+    }
+
+    #main-content { 
+        flex: 1; 
+        display: flex; 
+        flex-direction: column; 
+        background-color: #f8fafc; 
+        overflow: hidden; 
+    }
 
     #scrollable-content {
-        flex: 1; overflow-y: auto; overflow-x: hidden;
+        flex: 1; 
+        overflow-y: auto; 
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch; 
-        padding-bottom: 90px; /* Reducido para mejor visualización en móvil */
+        padding-bottom: 20px; /* Ya no hace falta espacio extra porque el menú no tapa nada */
         background-color: #f8fafc;
     }
 
@@ -50,42 +78,46 @@
         display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; height: 100%;
     }
 
+    /* MENÚ INFERIOR ESTÁTICO (IMPOSIBLE QUE DESAPAREZCA) */
     #bottom-nav {
-        display: none; position: absolute; bottom: 0; left: 0; right: 0;
-        background: white; border-top: 1px solid #e2e8f0;
-        justify-content: space-around; align-items: flex-start;
-        height: auto; z-index: 9999; 
+        display: flex; 
+        flex: 0 0 auto; /* No permite que el flexbox lo encoja NUNCA */
+        width: 100%;
+        background: white; 
+        border-top: 1px solid #e2e8f0;
+        justify-content: space-around; 
+        align-items: center; 
+        min-height: 65px; 
+        z-index: 9999; 
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-        padding-top: 10px; padding-bottom: max(15px, env(safe-area-inset-bottom)); 
+        /* CORRECCIÓN: Sumamos 20px para librar los botones del sistema operativo */
+        padding-bottom: calc(75px + env(safe-area-inset-bottom));
+        padding-top: 8px;
     }
 
     .bottom-nav-item {
         flex: 1; display: flex; flex-direction: column;
         align-items: center; justify-content: center; 
-        height: auto; color: #94a3b8; font-size: 10px; font-weight: 600;
-        cursor: pointer; transition: all 0.2s; margin-bottom: 5px;
+        height: 100%; color: #94a3b8; font-size: 10px; font-weight: 600;
+        cursor: pointer; transition: all 0.2s;
     }
-    .bottom-nav-item .material-icons { font-size: 26px; margin-bottom: 3px; }
+    .bottom-nav-item .material-icons { font-size: 24px; margin-bottom: 2px; }
     .bottom-nav-item.active { color: var(--g4s-red); }
     .bottom-nav-item.active .material-icons { transform: translateY(-2px); }
 
     /* RESPONSIVE */
     .web-only { display: none !important; }
     #sidebar { display: none; }
-    #bottom-nav { display: flex; }
-    .mobile-header { display: flex; }
+    .mobile-header { display: flex; flex-shrink: 0; }
     
     @media (min-width: 768px) {
         #sidebar { display: flex; }
-        #bottom-nav { display: none; }
+        #bottom-nav { display: none !important; } /* Se oculta automáticamente en PC */
         .web-only { display: flex !important; }
         .mobile-only { display: none !important; }
         .mobile-header { display: none; }
-        #scrollable-content { padding-bottom: 20px; }
     }
 
-    #main-content { flex: 1; display: flex; flex-direction: column; background-color: #f8fafc; position: relative; overflow: hidden; }
-    
     .nav-item { padding: 12px 24px; display: flex; align-items: center; color: #64748b; cursor: pointer; border-left: 4px solid transparent; font-size: 14px; transition: 0.2s; text-decoration: none; }
     .nav-item:hover { background-color: #f1f5f9; }
     .nav-item.active { background: #fff1f2; color: var(--g4s-red); border-left-color: var(--g4s-red); font-weight: 600; }
@@ -98,14 +130,14 @@
     .hidden { display: none !important; }
     .modal-overlay { position: fixed; inset: 0; z-index: 11000; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 
-    /* ESTILOS TABLAS Y FORMULARIOS AJUSTADOS A MÓVIL */
-    .form-input { width: 100%; padding: 10px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #475569; outline: none; transition: border-color 0.2s; }
+    /* ESTILOS TABLAS Y FORMULARIOS */
+    .form-input { width: 100%; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #475569; outline: none; transition: border-color 0.2s; }
     .form-input:focus { border-color: #cbd5e1; }
     .form-input:disabled, .form-input[readonly] { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
-    .form-label { font-size: 10px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-label { font-size: 10px; font-weight: 700; color: #94a3b8; margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
 
     .toggle-group { display: flex; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; }
-    .toggle-btn { flex: 1; padding: 10px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+    .toggle-btn { flex: 1; padding: 12px; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
     .toggle-btn.active { background-color: #ea1b24; color: white; border-color: #ea1b24; }
     .toggle-btn.inactive { background-color: white; color: #64748b; }
     
@@ -123,19 +155,19 @@
                 <h3 class="text-lg font-bold text-slate-800 uppercase tracking-wide" id="titulo-modal-local">NUEVO LOCAL</h3>
                 <button type="button" onclick="window.cerrarModalLocal()" class="text-gray-400 hover:text-red-500 transition-colors"><span class="material-icons">close</span></button>
             </div>
-            <form id="form-gestion-local" onsubmit="window.guardarLocalConf(event)" class="space-y-4 overflow-y-auto pr-2">
+            <form id="form-gestion-local" onsubmit="window.guardarLocalConf(event)" class="space-y-5 overflow-y-auto pr-2">
                 <input type="hidden" id="gl_id">
                 <div>
                     <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">NÚMERO LOCAL *</label>
-                    <input type="text" id="gl_numero" required class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 font-bold uppercase text-slate-700">
+                    <input type="text" id="gl_numero" required class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 font-bold uppercase text-slate-700">
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">RAZÓN SOCIAL *</label>
-                    <input type="text" id="gl_razon" required class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 uppercase">
+                    <input type="text" id="gl_razon" required class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 uppercase">
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">PISO</label>
-                    <select id="gl_piso" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 bg-white">
+                    <select id="gl_piso" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 bg-white">
                         <option value="">Seleccione...</option>
                         <option value="Piso 1  - Puerta interna Dollar City">Piso 1</option>
                         <option value="Piso 2">Piso 2</option>
@@ -152,20 +184,19 @@
                       <option value="Bulk Training proyecto nemecon">Piso Bulk Training proyecto nemecon </option> 
                         <option value="Mezanine">Mezanine</option>
                         <option value="Sotano">Sótano</option>
-
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">HORARIO</label>
-                        <input type="text" id="gl_horario" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: 10am a 08pm">
+                        <input type="text" id="gl_horario" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: 10am a 08pm">
                     </div>
                     <div>
                         <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">DÍAS SEMANA</label>
-                        <input type="text" id="gl_dias" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: Lunes a Sábado">
+                        <input type="text" id="gl_dias" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: Lunes a Sábado">
                     </div>
                 </div>
-                <div class="pt-3 flex justify-between gap-4 mt-2 border-t border-gray-100">
+                <div class="pt-4 flex justify-between gap-4 mt-2 border-t border-gray-100">
                     <button type="button" onclick="window.cerrarModalLocal()" class="flex-1 font-bold text-xs text-gray-600 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">CANCELAR</button>
                     <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider transition-colors">GUARDAR</button>
                 </div>
@@ -209,7 +240,7 @@
         <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Cargando...</p>
     </div>
 
-    <header class="mobile-header bg-white border-b px-4 py-3 flex justify-between items-center z-40 shadow-sm shrink-0 h-[60px]">
+    <header class="mobile-header bg-white border-b px-4 py-3 flex justify-between items-center z-40 shadow-sm h-[60px]">
       <div class="flex items-center gap-3">
       </div>
       <button onclick="window.cargarDatosAPI()" class="p-2 text-gray-400 hover:text-red-600 active:bg-gray-100 rounded-full"><span class="material-icons text-xl">sync</span></button>
@@ -248,42 +279,42 @@
             <div class="fixed-top-section">
                 </div>
 
-            <div id="scrollable-content" class="p-4 md:p-8 w-full max-w-[96%] mx-auto flex justify-center">
+            <div id="scrollable-content" class="p-2 md:p-8 w-full max-w-full md:max-w-[96%] mx-auto flex justify-center">
 
                 <section id="sec-formulario" class="g4s-section hidden w-full max-w-2xl mx-auto">
-                    <div class="bg-white rounded-xl md:rounded-[24px] shadow-sm border border-slate-100 p-4 md:p-8">
+                    <div class="bg-white rounded-2xl md:rounded-[24px] shadow-sm border border-slate-100 p-4 md:p-8 w-full">
                         
-                        <div class="flex items-center gap-4 mb-6">
+                        <div class="flex items-center gap-4 mb-6 md:mb-8">
                             <button type="button" onclick="window.navegar('reportes', 'reportes')" class="bg-gray-100 p-2 rounded-full text-slate-600 hover:bg-gray-200 transition">
                                 <span class="material-icons text-sm">arrow_back</span>
                             </button>
                             <h2 id="form-main-title" class="text-lg md:text-xl font-bold text-slate-800">NUEVO REGISTRO</h2>
                         </div>
                         
-                        <form id="form-registro" onsubmit="window.enviarFormulario(event)" class="space-y-3">
+                        <form id="form-registro" onsubmit="window.enviarFormulario(event)" class="space-y-4 md:space-y-5">
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="form-label">SITIO *</label>
-                                    <input type="text" id="SITIO" value="CENTRO COMERCIAL FUNDADORES - PROPIEDAD HORIZONTAL" readonly class="form-input font-bold text-slate-600 text-ellipsis overflow-hidden whitespace-nowrap">
+                                    <input type="text" id="SITIO" value="CENTRO COMERCIAL FUNDADORES - PROPIEDAD HORIZONTAL" readonly class="form-input font-bold text-slate-600 text-xs md:text-sm truncate">
                                 </div>
                                 <div>
                                     <label class="form-label">ACCIÓN QUE REPORTA *</label>
-                                    <input type="text" id="ACCION" readonly class="form-input font-bold text-red-600">
+                                    <input type="text" id="ACCION" readonly class="form-input font-bold text-red-600 text-xs md:text-sm">
                                 </div>
                             </div>
 
                             <div>
                                 <label class="form-label">USUARIO REPORTA *</label>
-                                <input type="text" id="USUARIO_ACTUAL" readonly class="form-input bg-gray-100 font-semibold cursor-not-allowed text-ellipsis overflow-hidden whitespace-nowrap">
+                                <input type="text" id="USUARIO_ACTUAL" readonly class="form-input bg-gray-100 font-semibold cursor-not-allowed text-xs md:text-sm truncate">
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 
                                 <div class="col-span-1 md:col-span-2">
                                     <div id="contenedor-buscador-local" class="relative">
                                         <label class="form-label">NÚMERO DEL LOCAL *</label>
-                                        <input type="text" id="BUSCADOR_LOCAL" class="form-input uppercase bg-white cursor-text" placeholder="BUSCAR O SELECCIONAR..." autocomplete="off" required>
+                                        <input type="text" id="BUSCADOR_LOCAL" class="form-input uppercase bg-white cursor-text text-sm" placeholder="BUSCAR O SELECCIONAR..." autocomplete="off" required>
                                         <input type="hidden" id="NUMERO_LOCAL" value="">
                                         <div id="dropdown-locales" class="hidden absolute z-50 w-full bg-white border border-gray-200 shadow-xl rounded-lg mt-1 max-h-48 overflow-y-auto left-0" style="top: calc(100% - 4px);">
                                             </div>
@@ -305,16 +336,16 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <input type="hidden" id="DIA_SEMANA" value="">
+                            <input type="hidden" id="DIA_SEMANA" value="">
 
-                                <div class="col-span-1 md:col-span-2">
-                                    <label class="form-label">REPORTE DE NOVEDAD *</label>
-                                    <input type="hidden" id="NOVEDAD" value="SIN NOVEDAD">
-                                    <div class="toggle-group">
-                                        <button type="button" id="btn-sin-novedad" onclick="window.setNovedad('SIN NOVEDAD')" class="toggle-btn active">SIN NOVEDAD</button>
-                                        <button type="button" id="btn-fuera-horario" onclick="window.setNovedad('FUERA DE HORARIO')" class="toggle-btn inactive border-l border-gray-200">FUERA DE HORARIO</button>
-                                    </div>
+                            <div class="col-span-1 md:col-span-2">
+                                <label class="form-label">REPORTE DE NOVEDAD *</label>
+                                <input type="hidden" id="NOVEDAD" value="SIN NOVEDAD">
+                                <div class="toggle-group">
+                                    <button type="button" id="btn-sin-novedad" onclick="window.setNovedad('SIN NOVEDAD')" class="toggle-btn active">SIN NOVEDAD</button>
+                                    <button type="button" id="btn-fuera-horario" onclick="window.setNovedad('FUERA DE HORARIO')" class="toggle-btn inactive border-l border-gray-200">FUERA DE HORARIO</button>
                                 </div>
                             </div>
 
@@ -357,7 +388,7 @@
                                 </div>
                             </div>
 
-                            <div class="pt-4 flex gap-3">
+                            <div class="pt-6 flex gap-4">
                                 <button type="button" onclick="window.navegar('reportes', 'reportes')" class="flex-1 font-bold text-xs text-gray-500 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg">CANCELAR</button>
                                 <button type="submit" class="flex-1 btn-g4s text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider">GUARDAR</button>
                             </div>
@@ -442,7 +473,6 @@
                     </div>
                 </section>
                 
-                <div class="h-32 md:hidden"></div>
             </div>
         </main>
     </div>
@@ -722,14 +752,21 @@
         if(userDisplay) userDisplay.innerText = finalUser;
         if(inputFormUser) inputFormUser.value = finalUser.toUpperCase();
 
-        // LÓGICA DE VISIBILIDAD DE SECCIONES (Modificada para que TODOS tengan permiso)
-        // Se removió el condicional if (!esAdmin) que ocultaba elementos.
+        const esAdmin = EMAILS_AUTORIZADOS.includes(finalUser);
+        if (!esAdmin) {
+            const elementosAOcultar = document.querySelectorAll('[data-target="gestion_locales"], [data-target="reportes"]');
+            elementosAOcultar.forEach(el => el.classList.add('hidden'));
+        }
     }
 
     // ================= NAVEGACIÓN =================
     window.navegar = function(vista, menuId) {
-        
-        // Se removió el bloque condicional (!esAdmin) para que todos puedan entrar a los reportes.
+        const userEmail = (document.getElementById('user-display').innerText || "").toLowerCase().trim();
+        const esAdmin = EMAILS_AUTORIZADOS.includes(userEmail);
+        if (!esAdmin && (menuId === 'reportes' || menuId === 'gestion_locales')) {
+            window.mostrarToast('Acceso Restringido', 'No tienes permisos para esta sección', 'error');
+            return;
+        }
 
         document.querySelectorAll('.g4s-section').forEach(s => s.classList.add('hidden'));
         
