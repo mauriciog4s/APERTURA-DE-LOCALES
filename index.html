@@ -49,8 +49,8 @@
     /* EL LAYOUT SE LLEVA EL ESPACIO QUE SOBRA ENTRE EL HEADER Y EL MENÚ */
     .app-layout { 
         display: flex; 
-        flex: 1 1 auto; /* Permite crecer y encogerse correctamente */
-        min-height: 0; /* ¡ESTO ES CLAVE! Evita que el contenido interno rompa el flexbox y empuje el menú */
+        flex: 1 1 auto; 
+        min-height: 0; 
         overflow: hidden; 
         position: relative; 
         width: 100%;
@@ -69,7 +69,7 @@
         overflow-y: auto; 
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch; 
-        padding-bottom: 120px; /* ISSUE 1 CORREGIDO: Aumentado para que el botón de Guardar no quede tapado por el menú/teclado */
+        padding-bottom: 200px; /* Aumentado para sobrepasar con seguridad el menú alto y los botones flotantes */
         background-color: #f8fafc;
     }
 
@@ -78,10 +78,10 @@
         display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; height: 100%;
     }
 
-    /* MENÚ INFERIOR ESTÁTICO (IMPOSIBLE QUE DESAPAREZCA) */
+    /* MENÚ INFERIOR ESTÁTICO */
     #bottom-nav {
         display: flex; 
-        flex: 0 0 auto; /* No permite que el flexbox lo encoja NUNCA */
+        flex: 0 0 auto; 
         width: 100%;
         background: white; 
         border-top: 1px solid #e2e8f0;
@@ -90,18 +90,37 @@
         min-height: 65px; 
         z-index: 9999; 
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-        /* ISSUE 1 CORREGIDO: Reducido de 75px a 20px para no comerse la pantalla innecesariamente */
-        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+        /* RESTAURADO a 75px: Esto es lo que evitaba que la barra del SO te ocultara el menú */
+        padding-bottom: calc(75px + env(safe-area-inset-bottom));
         padding-top: 8px;
     }
 
     .bottom-nav-item {
-        flex: 1; display: flex; flex-direction: column;
-        align-items: center; justify-content: center; 
-        height: 100%; color: #94a3b8; font-size: 10px; font-weight: 600;
-        cursor: pointer; transition: all 0.2s;
+        flex: 1; 
+        display: flex; 
+        flex-direction: column;
+        align-items: center; 
+        justify-content: center; 
+        height: 100%; 
+        color: #94a3b8; 
+        font-weight: 600;
+        cursor: pointer; 
+        transition: all 0.2s;
+        min-width: 0;
+        padding: 0 2px;
     }
-    .bottom-nav-item .material-icons { font-size: 24px; margin-bottom: 2px; }
+    .bottom-nav-item .material-icons { 
+        font-size: 24px; 
+        margin-bottom: 2px; 
+    }
+    .bottom-nav-item span:last-child {
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 10px;
+    }
     .bottom-nav-item.active { color: var(--g4s-red); }
     .bottom-nav-item.active .material-icons { transform: translateY(-2px); }
 
@@ -112,7 +131,7 @@
     
     @media (min-width: 768px) {
         #sidebar { display: flex; }
-        #bottom-nav { display: none !important; } /* Se oculta automáticamente en PC */
+        #bottom-nav { display: none !important; } 
         .web-only { display: flex !important; }
         .mobile-only { display: none !important; }
         .mobile-header { display: none; }
@@ -237,7 +256,7 @@
     </div>
     <div id="loader" class="hidden">
         <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mb-4"></div>
-        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Cargando...</p>
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Procesando...</p>
     </div>
 
     <header class="mobile-header bg-white border-b px-4 py-3 flex justify-between items-center z-40 shadow-sm h-[60px]">
@@ -261,6 +280,9 @@
                 <div onclick="window.navegar('reportes', 'reportes')" class="nav-item rounded-lg" data-target="reportes">
                     <span class="material-icons text-[20px] mr-3">history</span> Reportes
                 </div>
+                <div onclick="window.navegar('dashboard', 'dashboard')" class="nav-item rounded-lg" data-target="dashboard">
+                    <span class="material-icons text-[20px] mr-3">dashboard</span> Dashboard
+                </div>
             </nav>
             <div class="p-4 border-t border-gray-100 mt-auto bg-white">
                 <div class="flex items-center mb-4">
@@ -279,7 +301,62 @@
             <div class="fixed-top-section">
                 </div>
 
-            <div id="scrollable-content" class="p-2 md:p-8 w-full max-w-full md:max-w-[96%] mx-auto flex justify-center">
+            <div id="scrollable-content" class="p-2 md:p-8 w-full max-w-full md:max-w-[96%] mx-auto flex justify-center relative">
+
+                <div class="fixed bottom-[160px] right-4 flex flex-col gap-3 z-[9000] md:hidden">
+                    <button onclick="window.prepararFormulario('APERTURA', 'apertura')" class="bg-green-600 text-white w-14 h-14 rounded-full shadow-lg flex flex-col items-center justify-center hover:bg-green-700 active:scale-95 transition-transform border-2 border-white">
+                        <span class="material-icons text-xl">login</span>
+                        <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider">Apertura</span>
+                    </button>
+                    <button onclick="window.prepararFormulario('CIERRE', 'cierre')" class="bg-red-600 text-white w-14 h-14 rounded-full shadow-lg flex flex-col items-center justify-center hover:bg-red-700 active:scale-95 transition-transform border-2 border-white">
+                        <span class="material-icons text-xl">logout</span>
+                        <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider">Cierre</span>
+                    </button>
+                </div>
+
+                <section id="sec-dashboard" class="g4s-section hidden w-full max-w-4xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-3">
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight">Dashboard Operativo</h2>
+                        <button onclick="window.cargarDatosAPI()" class="bg-white border border-gray-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-2">
+                            <span class="material-icons text-sm">refresh</span> Actualizar
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+                            <span class="material-icons text-blue-500 mb-2">storefront</span>
+                            <span class="text-3xl font-black text-slate-800" id="dash-total-locales">0</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Locales Registrados</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+                            <span class="material-icons text-green-500 mb-2">login</span>
+                            <span class="text-3xl font-black text-slate-800" id="dash-aperturas">0</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Aperturas Hoy</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+                            <span class="material-icons text-red-500 mb-2">logout</span>
+                            <span class="text-3xl font-black text-slate-800" id="dash-cierres">0</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Cierres Hoy</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
+                            <span class="material-icons text-orange-500 mb-2">warning</span>
+                            <span class="text-3xl font-black text-slate-800" id="dash-novedades">0</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Novedades Hoy</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 flex items-center gap-2"><span class="material-icons text-sm">donut_large</span> Estado Operativo del Día</h3>
+                        <div class="w-full bg-gray-100 rounded-full h-4 mb-2 overflow-hidden flex">
+                            <div id="bar-abiertos" class="bg-green-500 h-4 transition-all duration-500" style="width: 0%"></div>
+                            <div id="bar-cerrados" class="bg-gray-300 h-4 transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 font-medium">
+                            <span id="txt-bar-abiertos">0 Abiertos</span>
+                            <span id="txt-bar-cerrados">0 Pendientes/Cerrados</span>
+                        </div>
+                    </div>
+                </section>
 
                 <section id="sec-formulario" class="g4s-section hidden w-full max-w-2xl mx-auto">
                     <div class="bg-white rounded-2xl md:rounded-[24px] shadow-sm border border-slate-100 p-4 md:p-8 w-full mb-10">
@@ -401,22 +478,29 @@
                         <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight">Reportes de Registros</h2>
                         
                         <div class="flex items-center gap-2 flex-wrap justify-end">
-                            <input type="date" id="reportes-fecha-desde" onchange="window.renderizarTablas()" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Desde">
-                            <input type="date" id="reportes-fecha-hasta" onchange="window.renderizarTablas()" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Hasta">
+                            <input type="date" id="reportes-fecha-desde" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Desde">
+                            <input type="date" id="reportes-fecha-hasta" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Hasta">
                             
+                            <button onclick="window.ejecutarFiltroReportes()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-1" title="Buscar">
+                                <span class="material-icons text-sm">search</span> Buscar
+                            </button>
+
                             <button onclick="window.limpiarFiltrosReportes()" class="bg-gray-100 text-slate-600 border border-gray-200 px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-gray-200 transition-colors shadow-sm flex items-center gap-1" title="Limpiar Filtros">
                                 <span class="material-icons text-sm">filter_alt_off</span>
                             </button>
 
-                            <button onclick="window.descargarExcel('tabla-reportes-gestion', 'Reportes_G4S')" class="bg-green-600 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-green-700 transition-colors shadow-sm flex items-center gap-1">
+                            <button onclick="window.descargarExcel('Reportes_G4S')" class="bg-green-600 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-green-700 transition-colors shadow-sm flex items-center gap-1">
                                 <span class="material-icons text-sm">table_view</span> <span class="text-xs font-bold uppercase hidden md:inline">Excel</span>
                             </button>
                         </div>
                         
                     </div>
                     
-                    <div class="mb-4">
-                        <input type="text" id="filtro-reportes-local" onkeyup="window.renderizarTablas()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar por número de local o razón social...">
+                    <div class="mb-4 flex gap-2">
+                        <input type="text" id="filtro-reportes-local" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar por número de local o razón social...">
+                        <button onclick="window.ejecutarFiltroReportes()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-slate-900 transition-colors shadow-sm flex items-center shrink-0">
+                            <span class="material-icons text-sm">search</span>
+                        </button>
                     </div>
 
                     <div class="table-scroll">
@@ -424,17 +508,17 @@
                             <thead>
                                 <tr>
                                     <th>UNICID</th>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
                                     <th>Local</th>
                                     <th>Razón Social</th>
                                     <th>Acción</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
                                     <th>Novedad</th>
                                     <th>Observaciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-historico-body">
-                                <tr><td colspan="8" class="text-center text-gray-400 py-6 italic">Cargando reportes...</td></tr>
+                                <tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -478,11 +562,8 @@
     </div>
 
     <nav id="bottom-nav">
-        <div onclick="window.prepararFormulario('APERTURA', 'apertura')" class="bottom-nav-item active" data-target="apertura">
-            <span class="material-icons">login</span><span>Apertura</span>
-        </div>
-        <div onclick="window.prepararFormulario('CIERRE', 'cierre')" class="bottom-nav-item" data-target="cierre">
-            <span class="material-icons">logout</span><span>Cierre</span>
+        <div onclick="window.navegar('dashboard', 'dashboard')" class="bottom-nav-item" data-target="dashboard">
+            <span class="material-icons">dashboard</span><span>Inicio</span>
         </div>
         <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="bottom-nav-item" data-target="gestion_locales">
             <span class="material-icons">store</span><span>Locales</span>
@@ -495,44 +576,35 @@
 
 <script>
     // ================= CONFIGURACIÓN Y ESTADO GLOBAL =================
-    const API_ROUTE = encodeURI('/api/tb001_001_Apertura de locales'); 
-    const API_LOCALES_ROUTE = encodeURI('/api/tb_config_locales'); 
+    const API_ROUTE = encodeURI('/api/tb001_001_Apertura de locales?_limit=1000000000');
+    const API_LOCALES_ROUTE = encodeURI('/api/tb_config_locales?_limit=10000');
 
-    // LISTA DE CORREOS CON PERMISO TOTAL
-    const EMAILS_AUTORIZADOS = [
-        "t3.jorge.posada@co.g4s.com", 
-        "jhoan.gaitan@co.g4s.com",
-        "esteban.chamorro@co.g4s.com"
-    ];
+    // --- NUEVO: Lista de administradores ---
+    const ADMIN_USERS = ['jhoan.gaitan@co.g4s.com', 't3.jorge.posada@co.g4s.com', 'julian.boada@co.g4s.com'];
 
-    const localesDefecto = [
-        {numero_local: '101', razon_social: 'TENNIS LONDON', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '181', razon_social: 'WAFFLEMANIA', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo Festivos'},
-        {numero_local: '226', razon_social: 'JOYERIA LUXOR', piso: 'Piso 2', horario: 'A JUEVES DE 10:00 A 20:00; VIERNES Y SADADO 10:00 A 21:00; DOMINGO Y FESTIVOS 11:00', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '226-1', razon_social: 'MIMOS', piso: 'Piso 2', horario: 'No registrado', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '270', razon_social: '270', piso: 'Piso 2', horario: 'Lunes a Sabado de 10:00 a 08:00 Pm; Domingos y Festivos de 11:00 a 08:00 Pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '352', razon_social: 'CINECOLOMBIA', piso: 'Piso 3', horario: 'No registrado', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '413', razon_social: 'HAPPY CITY', piso: 'Piso 4', horario: 'No registrado', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo Festivos'},
-        {numero_local: '9606', razon_social: 'SERJAF', piso: 'Sotano', horario: 'lunes a sábado de 10am a 08pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9610', razon_social: 'MEETRIA ASESORÍA Y CONSULTORÍA', piso: 'Piso 1', horario: 'Lunes a viernes de 08am a 05pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes'},
-        {numero_local: '9802', razon_social: 'LABORATORIO MOVIL CENTER', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9805', razon_social: "COW'S PIZZA", piso: 'Piso 1', horario: 'Lunes a sábados de 10am a 09pm y Domingo y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9826', razon_social: 'MOVILCENTER', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9901', razon_social: 'POPSY', piso: 'Piso 1', horario: 'lunes a domingo de 10 am a 09pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9901', razon_social: 'ALMACENES ÉXITO', piso: 'Piso 1', horario: 'lunes a domingo y festivos de 08am a 09pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9911', razon_social: 'BANCO UNION', piso: 'Piso 1', horario: 'lunes a sábado de 10am a 07pm y domingos y festivos de 11am a 03pm', dias_semana: 'Lunes, Miercoles, Martes, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9929', razon_social: 'VITAL MARKET', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9932', razon_social: 'LEMON SWEET - FUNDADORES', piso: 'Piso 1', horario: 'De Lunes a Sabado de 10am a 9pm Domingos y Festivos de 11am a 8pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: '9933', razon_social: 'VENECIA', piso: 'Piso 1', horario: 'lunes a sabado de 10am a 09pm y domingos y festivos de 11am a 08pm', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: 'C2 COLUMNA ENTRADA PRINCIPAL', razon_social: 'STAND VALENBROWN', piso: 'Piso 1', horario: 'a Jueves de 10:00 a 20:00; Viernes y Sabado de 10:00 a 21:00; Domingos y Festivos de 11:00 a', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'},
-        {numero_local: 'ZC-COMERCIO 2', razon_social: 'VALEN BROWN', piso: 'Piso 1', horario: 'A JUEVES 10:00 A 20:00; VIERNES Y SABADO 10:00 A 21:00; DOMINGO Y FESTIVOS DE 11:00', dias_semana: 'Lunes, Martes, Miercoles, Jueves, Viernes, Sabado, Domingo, Festivos'}
-    ];
+    window.esAdmin = function() {
+        const userDisplay = document.getElementById('user-display');
+        const inputFormUser = document.getElementById('USUARIO_ACTUAL');
+        let usuarioActual = '';
+        if (inputFormUser && inputFormUser.value) {
+            usuarioActual = inputFormUser.value.toLowerCase().trim();
+        } else if (userDisplay) {
+            usuarioActual = userDisplay.innerText.toLowerCase().trim();
+        }
+        return ADMIN_USERS.includes(usuarioActual);
+    };
+    // ---------------------------------------
+
+    const localesDefecto = [];
 
     let registrosData = []; 
     let localesConfigData = []; 
     let imagenesBase64 = {};
     let localEditandoId = null;
     let buscadorInicializado = false;
+    window.datosFiltradosActuales = []; // Nueva variable global para exportar rápido a Excel
+
+
 
     // ================= INICIALIZACIÓN =================
     function initApp() {
@@ -550,31 +622,99 @@
         initApp(); 
     }
 
-    // ================= FUNCIÓN PARA DESCARGAR EXCEL =================
-    window.descargarExcel = function(tableId, filename) {
-        const table = document.getElementById(tableId);
-        if (!table) return;
+    // ================= ACTUALIZAR DASHBOARD =================
+    window.actualizarDashboard = function() {
+        const hoyStr = new Date().toLocaleDateString('en-CA'); 
         
-        let csv = '\uFEFF'; 
-        for (let i = 0; i < table.rows.length; i++) {
-            let row = [], cols = table.rows[i].querySelectorAll('td, th');
-            for (let j = 0; j < cols.length; j++) {
-                let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/g, '""');
-                row.push('"' + text + '"');
+        const totalLocales = localesConfigData.length || 0;
+        document.getElementById('dash-total-locales').innerText = totalLocales;
+
+        const registrosHoy = registrosData.filter(r => {
+            if(!r.datetime) return false;
+            const fechaR = new Date(r.datetime).toLocaleDateString('en-CA');
+            return fechaR === hoyStr;
+        });
+
+        let aperturasSet = new Set();
+        let cierresSet = new Set();
+        let novedadesCount = 0;
+
+        registrosHoy.forEach(r => {
+let num = String(r.numero_local || '').toUpperCase();
+let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
+            let nov = (r.novedad || 'SIN NOVEDAD').toUpperCase();
+
+            if (acc === 'APERTURA') aperturasSet.add(num);
+            if (acc === 'CIERRE') cierresSet.add(num);
+            if (nov !== 'SIN NOVEDAD') novedadesCount++;
+        });
+
+        document.getElementById('dash-aperturas').innerText = aperturasSet.size;
+        document.getElementById('dash-cierres').innerText = cierresSet.size;
+        document.getElementById('dash-novedades').innerText = novedadesCount;
+
+        let pctAbiertos = totalLocales > 0 ? (aperturasSet.size / totalLocales) * 100 : 0;
+        if(pctAbiertos > 100) pctAbiertos = 100;
+        
+        document.getElementById('bar-abiertos').style.width = pctAbiertos + '%';
+        document.getElementById('bar-cerrados').style.width = (100 - pctAbiertos) + '%';
+        
+        document.getElementById('txt-bar-abiertos').innerText = aperturasSet.size + ' Abiertos';
+        document.getElementById('txt-bar-cerrados').innerText = (totalLocales - aperturasSet.size) + ' Pendientes/Cerrados';
+    }
+
+    // ================= FUNCIÓN PARA DESCARGAR EXCEL OPTIMIZADA =================
+    window.descargarExcel = function(filename) {
+        const datos = window.datosFiltradosActuales || [];
+        if (datos.length === 0) return window.mostrarToast('Aviso', 'No hay datos para exportar. Ejecute una búsqueda primero.', 'warning');
+
+        document.getElementById('loader').classList.remove('hidden');
+
+        setTimeout(() => {
+            try {
+                let csv = '\uFEFF'; 
+                csv += '"UNICID";"Local";"Razón Social";"Acción";"Fecha";"Hora";"Novedad";"Observaciones"\r\n';
+
+                datos.forEach(r => {
+                    const fechaObj = new Date(r.datetime);
+                    const fechaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleDateString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric'});
+                    const horaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'});
+                    
+                    const accionVal = r.accion_que_reporta || r.accionid || '---';
+                    const unicId = r.pisoid || r.id || '---';
+                    const novedad = r.novedad || 'SIN NOVEDAD';
+                    const observaciones = (r.observaciones || '---').replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/g, '""');
+                    
+                    let numLocal = r.numero_local || '---';
+                    let razonSocial = r.razon_social;
+                    if (!razonSocial) {
+                        const locMatch = localesConfigData.find(l => String(l.numero_local).toUpperCase() === String(numLocal).toUpperCase());
+                        razonSocial = locMatch ? locMatch.razon_social : '---';
+                    }
+
+                    numLocal = String(numLocal).replace(/"/g, '""');
+                    razonSocial = String(razonSocial).replace(/"/g, '""');
+
+                    csv += `"${unicId}";"${numLocal}";"${razonSocial}";"${accionVal}";"${fechaStr}";"${horaStr}";"${novedad}";"${observaciones}"\r\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename + '.csv';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                window.mostrarToast('Éxito', 'Archivo Excel descargado', 'success');
+            } catch (error) {
+                console.error("Error al exportar:", error);
+                window.mostrarToast('Error', 'No se pudo exportar el archivo', 'error');
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
             }
-            csv += row.join(';') + '\r\n'; 
-        }
-        
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename + '.csv';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        window.mostrarToast('Éxito', 'Archivo Excel descargado', 'success');
+        }, 50); 
     }
 
     // ================= FUNCION PARA OBTENER LOCALES ABIERTOS =================
@@ -587,11 +727,30 @@
             let num = r.numero_local;
             let acc = r.accion_que_reporta || r.accionid;
             if(num && acc) {
-                localesEstado[num.toUpperCase()] = acc.toUpperCase();
-            }
+    localesEstado[String(num).toUpperCase()] = String(acc).toUpperCase();
+}
         });
         
         return Object.keys(localesEstado).filter(num => localesEstado[num] === 'APERTURA');
+    }
+
+    // ================= FUNCION PARA OBTENER LOCALES ABIERTOS HOY (NUEVA) =================
+    window.obtenerLocalesAbiertosHoy = function() {
+        const hoyStr = new Date().toLocaleDateString('en-CA'); 
+        let abiertosHoy = new Set();
+        
+        registrosData.forEach(r => {
+            if(!r.datetime) return;
+            const fechaR = new Date(r.datetime).toLocaleDateString('en-CA');
+            let num = r.numero_local;
+            let acc = r.accion_que_reporta || r.accionid;
+            
+           if(num && acc && String(acc).toUpperCase() === 'APERTURA' && fechaR === hoyStr) {
+    abiertosHoy.add(String(num).toUpperCase());
+}
+        });
+        
+        return Array.from(abiertosHoy);
     }
 
     // ================= LOGICA DEL BUSCADOR AUTOCOMPLETADO =================
@@ -609,11 +768,19 @@
         const accionActual = document.getElementById('ACCION') ? document.getElementById('ACCION').value : '';
         let localesAMostrar = localesConfigData;
         
-        if (accionActual === 'CIERRE') {
+ if (accionActual === 'CIERRE') {
             const localesAbiertos = window.obtenerLocalesAbiertos();
             localesAMostrar = localesConfigData.filter(loc => {
                 let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : '');
-                return localesAbiertos.includes(num.toUpperCase());
+                return localesAbiertos.includes(String(num).toUpperCase());
+            });
+ 
+} else if (accionActual === 'APERTURA') {
+            const localesAbiertos = window.obtenerLocalesAbiertos(); // <-- Revisamos el estado actual, no el historial del día
+            localesAMostrar = localesConfigData.filter(loc => {
+                let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : '');
+                // Mostrar todos los locales que NO estén abiertos actualmente (es decir, que estén cerrados)
+                return !localesAbiertos.includes(String(num).toUpperCase());
             });
         }
 
@@ -627,8 +794,9 @@
                 return; 
             }
 
-            let text = "";
-            if (num.toUpperCase() !== razon.toUpperCase()) {
+let text = "";
+            // Esto evita que la app se rompa con locales que son solo números
+            if (String(num).toUpperCase() !== String(razon).toUpperCase()) {
                 text = `${num} / ${razon}`;
             } else {
                 text = `${num}`; 
@@ -654,7 +822,7 @@
             const msjVacio = document.createElement('div');
             msjVacio.id = 'msg-local-vacio';
             msjVacio.className = 'p-3 text-xs text-gray-400 italic text-center font-bold';
-            msjVacio.innerText = accionActual === 'CIERRE' ? 'NO HAY LOCALES ABIERTOS PARA CERRAR' : 'NO SE ENCONTRARON LOCALES VÁLIDOS';
+            msjVacio.innerText = accionActual === 'CIERRE' ? 'NO HAY LOCALES ABIERTOS PARA CERRAR' : (accionActual === 'APERTURA' ? 'TODOS LOS LOCALES ESTÁN ABIERTOS O NO ENCONTRADOS' : 'NO SE ENCONTRARON LOCALES VÁLIDOS');
             dropdown.appendChild(msjVacio);
         }
     }
@@ -752,22 +920,14 @@
         if(userDisplay) userDisplay.innerText = finalUser;
         if(inputFormUser) inputFormUser.value = finalUser.toUpperCase();
 
-        const esAdmin = EMAILS_AUTORIZADOS.includes(finalUser);
-        if (!esAdmin) {
-            const elementosAOcultar = document.querySelectorAll('[data-target="gestion_locales"], [data-target="reportes"]');
-            elementosAOcultar.forEach(el => el.classList.add('hidden'));
+        // --- NUEVO: Refrescar tabla para aplicar permisos ---
+        if (window.renderizarTablaLocales) {
+            window.renderizarTablaLocales();
         }
     }
 
     // ================= NAVEGACIÓN =================
     window.navegar = function(vista, menuId) {
-        const userEmail = (document.getElementById('user-display').innerText || "").toLowerCase().trim();
-        const esAdmin = EMAILS_AUTORIZADOS.includes(userEmail);
-        if (!esAdmin && (menuId === 'reportes' || menuId === 'gestion_locales')) {
-            window.mostrarToast('Acceso Restringido', 'No tienes permisos para esta sección', 'error');
-            return;
-        }
-
         document.querySelectorAll('.g4s-section').forEach(s => s.classList.add('hidden'));
         
         const secId = (vista === 'apertura' || vista === 'cierre') ? 'formulario' : vista;
@@ -779,11 +939,20 @@
         if(sideItem) sideItem.classList.add('active');
 
         document.querySelectorAll('.bottom-nav-item').forEach(i => { i.classList.remove('active'); i.style.color = '#94a3b8'; });
+        
         const bottomItem = document.querySelector(`#bottom-nav .bottom-nav-item[data-target="${menuId}"]`);
-        if(bottomItem) { bottomItem.classList.add('active'); bottomItem.style.color = 'var(--g4s-red)'; }
+        if(bottomItem) { 
+            bottomItem.classList.add('active'); 
+            bottomItem.style.color = 'var(--g4s-red)'; 
+        }
 
-        if (vista === 'reportes') window.cargarDatosAPI(); 
+        if (vista === 'reportes') {
+            window.datosFiltradosActuales = []; // Limpiamos para evitar exportar datos viejos
+            document.getElementById('tabla-historico-body').innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
+            window.cargarDatosAPI(); 
+        }
         if (vista === 'gestion_locales') window.cargarLocalesConfigAPI();
+        if (vista === 'dashboard') window.actualizarDashboard(); 
     };
 
     // ================= API GESTIÓN DE LOCALES =================
@@ -791,7 +960,6 @@
         let mergedLocales = [...localesDefecto];
 
         try {
-            // ISSUE 2 CORREGIDO: Evitar que los móviles guarden la respuesta de la API en caché
             const res = await fetch(API_LOCALES_ROUTE, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json', 'Cache-Control': 'no-cache' },
@@ -825,7 +993,7 @@
             localGuardado.forEach(dbLoc => {
                 let dbNum = dbLoc.numero_local;
                 if(dbNum && !mergedLocales.some(m => m.numero_local === dbNum)) {
-                    mergedLocales.push(dbLoc);
+                        mergedLocales.push(dbLoc);
                 }
             });
         }
@@ -833,15 +1001,27 @@
         localesConfigData = mergedLocales;
         window.renderizarTablaLocales(); 
         window.inicializarBuscadorLocales(); 
+        window.actualizarDashboard();
     }
 
+    // --- NUEVO: renderizarTablaLocales adaptado para permisos ---
     window.renderizarTablaLocales = function() {
         const tBody = document.getElementById('tbody-locales');
         if(!tBody) return;
         
-        const filtroTexto = document.getElementById("filtro-locales").value.toUpperCase();
+        const isAdmin = window.esAdmin(); // Evaluamos permisos
 
-        tBody.innerHTML = '';
+        // Ocultar o mostrar el botón "NUEVO" según permisos
+        const secGestion = document.getElementById('sec-gestion_locales');
+        if (secGestion) {
+            const btnNuevo = secGestion.querySelector('button[onclick="window.abrirModalLocal()"]');
+            if (btnNuevo) {
+                btnNuevo.style.display = isAdmin ? 'flex' : 'none';
+            }
+        }
+
+        const filtroTexto = document.getElementById("filtro-locales").value.toUpperCase();
+        let contenidoHTML = '';
         
         let localesFiltrados = localesConfigData.filter(loc => {
             let numero = String(loc.numero_local || '').toUpperCase();
@@ -868,27 +1048,46 @@
             let dias = typeof loc === 'string' ? '---' : (loc.dias_semana || loc.dias || '---');
             let id = typeof loc === 'string' ? index : (loc.id || index);
 
-            tBody.innerHTML += `
+            // Control de acceso a botones
+            let botonesAccion = '<span class="text-gray-400 italic text-[10px]">Solo lectura</span>';
+            
+            if (isAdmin) {
+                botonesAccion = `
+                    <div class="flex justify-center gap-1">
+                        <button type="button" onclick="window.abrirModalLocal('${id}')" title="Editar" class="text-blue-600 bg-blue-50 border border-blue-200 shadow-sm p-1.5 rounded-lg hover:bg-blue-100 active:scale-95 transition-all">
+                            <span class="material-icons text-sm">edit</span>
+                        </button>
+                        <button type="button" onclick="window.eliminarLocalConf('${id}', '${numero}')" title="Eliminar" class="text-red-600 bg-red-50 border border-red-200 shadow-sm p-1.5 rounded-lg hover:bg-red-100 active:scale-95 transition-all">
+                            <span class="material-icons text-sm">delete</span>
+                        </button>
+                    </div>`;
+            }
+
+            contenidoHTML += `
                 <tr class="hover:bg-gray-50 border-b border-gray-100">
                     <td class="font-bold text-slate-800 py-3">${numero}</td>
                     <td class="text-xs text-gray-600">${razon}</td>
                     <td class="text-xs text-slate-700 font-semibold">${piso}</td>
                     <td class="text-[10px] text-gray-500">${horario}</td>
                     <td class="text-[10px] text-gray-500" title="${dias}">${dias}</td>
-                    <td class="text-center">
-                        <button type="button" onclick="window.abrirModalLocal('${id}')" class="text-slate-500 bg-slate-100 border border-slate-200 shadow-sm p-1.5 rounded-lg hover:bg-slate-200 active:scale-95 transition-all">
-                            <span class="material-icons text-sm">edit</span>
-                        </button>
-                    </td>
+                    <td class="text-center align-middle">${botonesAccion}</td>
                 </tr>`;
         });
+        
+        tBody.innerHTML = contenidoHTML;
     }
 
     window.filtrarTablaLocales = function() {
         window.renderizarTablaLocales();
     }
 
+    // --- NUEVO: abrirModalLocal adaptado para permisos ---
     window.abrirModalLocal = function(id = null) {
+        if (!window.esAdmin()) {
+            window.mostrarToast('Acceso Denegado', 'No tienes permisos para modificar locales.', 'error');
+            return;
+        }
+
         localEditandoId = id;
         const form = document.getElementById('form-gestion-local');
         form.reset();
@@ -917,10 +1116,15 @@
         document.getElementById('modal-local').classList.add('hidden');
     }
 
+    // --- NUEVO: guardarLocalConf adaptado para permisos ---
     window.guardarLocalConf = async function(e) {
         e.preventDefault();
         
-        // ISSUE 2 CORREGIDO: Eliminamos created_at para no causar rechazo 500 del servidor
+        if (!window.esAdmin()) {
+            window.mostrarToast('Acceso Denegado', 'No tienes permisos para realizar esta acción.', 'error');
+            return;
+        }
+
         const payload = {
             numero_local: document.getElementById('gl_numero').value.toUpperCase(),
             razon_social: document.getElementById('gl_razon').value.toUpperCase(),
@@ -936,9 +1140,11 @@
             const csrfToken = await window.obtenerCsrfToken();
             let fetchUrl = API_LOCALES_ROUTE;
             
-            if (localEditandoId !== null && typeof localesConfigData[0] !== 'string') {
-                fetchUrl = `${API_LOCALES_ROUTE}/${localEditandoId}`;
-            }
+           if (localEditandoId !== null && typeof localesConfigData[0] !== 'string') {
+    // Tomamos la ruta global y la cortamos en el "?" para quitar el "_limit=10000"
+    const rutaBaseLimpia = API_LOCALES_ROUTE.split('?')[0]; 
+    fetchUrl = `${rutaBaseLimpia}/${localEditandoId}`;
+}
 
             const res = await fetch(fetchUrl, {
                 method: 'POST', 
@@ -973,10 +1179,46 @@
         }
     }
 
+    // --- NUEVO: función eliminarLocalConf ---
+    window.eliminarLocalConf = async function(id, numero) {
+        if (!window.esAdmin()) return;
+
+        if (!confirm(`¿Estás seguro de que deseas eliminar el local ${numero}? Esta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hidden');
+
+        try {
+            const csrfToken = await window.obtenerCsrfToken();
+            // Hacemos el mismo corte dinámico para asegurar que la URL sea válida
+const rutaBaseLimpia = API_LOCALES_ROUTE.split('?')[0];
+const fetchUrl = `${rutaBaseLimpia}/${id}`;
+
+            const res = await fetch(fetchUrl, {
+                method: 'DELETE',
+                headers: { 'CSRF-Token': csrfToken, 'Accept': 'application/json' }
+            });
+
+            if(!res.ok) throw new Error('No se pudo eliminar en el servidor');
+
+            window.mostrarToast('Éxito', `Local ${numero} eliminado correctamente.`, 'success');
+        } catch (err) {
+            console.error("Error al eliminar local en BD:", err);
+            let guardados = JSON.parse(localStorage.getItem('G4S_LOCALES_CUSTOM') || '[]');
+            guardados = guardados.filter(l => String(l.id) !== String(id));
+            localStorage.setItem('G4S_LOCALES_CUSTOM', JSON.stringify(guardados));
+            window.mostrarToast('Atención', `Local ${numero} eliminado offline.`, 'warning');
+        } finally {
+            loader.classList.add('hidden');
+            await window.cargarLocalesConfigAPI();
+        }
+    }
+
     // ================= CARGA DE DATOS Y TABLA HISTORIAL =================
     window.cargarDatosAPI = async function() {
         try {
-            // ISSUE 2 CORREGIDO: Evitar que el historial se quede pegado por caché
             const res = await fetch(API_ROUTE, {
                 method: 'GET',
                 headers: { 'Cache-Control': 'no-cache', 'Accept': 'application/json' },
@@ -993,8 +1235,8 @@
             else if (data && typeof data === 'object') arr = Object.values(data).filter(v => typeof v === 'object');
 
             registrosData = arr; 
-            window.renderizarTablas();
             window.generarListaBuscador(); 
+            window.actualizarDashboard();
         } catch (e) {
             console.error("Error obteniendo datos", e);
         }
@@ -1009,19 +1251,30 @@
         if(inputHasta) inputHasta.value = '';
         if(inputFiltroLocal) inputFiltroLocal.value = '';
 
-        window.renderizarTablas();
+        window.datosFiltradosActuales = []; // Vaciamos memoria
+        document.getElementById('tabla-historico-body').innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
+    }
+
+    // NUEVA FUNCIÓN: Envuelve renderizarTablas en un setTimeout para no bloquear la UI
+    window.ejecutarFiltroReportes = function() {
+        document.getElementById('loader').classList.remove('hidden');
+        // Usamos setTimeout para permitir que el loader se muestre antes de congelar el hilo principal
+        setTimeout(() => {
+            window.renderizarTablas();
+            document.getElementById('loader').classList.add('hidden');
+        }, 50);
     }
 
     window.renderizarTablas = function() {
         const tBody = document.getElementById('tabla-historico-body');
         if(!tBody) return;
-        tBody.innerHTML = '';
 
         let fechaDesdeInput = document.getElementById('reportes-fecha-desde') ? document.getElementById('reportes-fecha-desde').value : '';
         let fechaHastaInput = document.getElementById('reportes-fecha-hasta') ? document.getElementById('reportes-fecha-hasta').value : '';
         let filtroLocal = document.getElementById('filtro-reportes-local') ? document.getElementById('filtro-reportes-local').value.toUpperCase() : '';
 
         if (!fechaDesdeInput && !fechaHastaInput && !filtroLocal) {
+            window.datosFiltradosActuales = [];
             tBody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
             return;
         }
@@ -1059,11 +1312,17 @@
         }
 
         todosLosDatos.sort((a,b) => new Date(b.datetime||0) - new Date(a.datetime||0));
+        
+        // Guardamos en memoria global para el Excel optimizado
+        window.datosFiltradosActuales = todosLosDatos;
 
         if (todosLosDatos.length === 0) {
             tBody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic">No se encontraron resultados para los filtros aplicados.</td></tr>';
             return;
         }
+
+        // OPTIMIZACIÓN: Acumular HTML en una variable en lugar de sumar al innerHTML en cada ciclo
+        let contenidoHTML = '';
 
         todosLosDatos.forEach(r => {
             const fechaObj = new Date(r.datetime);
@@ -1087,20 +1346,23 @@
                 razonSocial = locMatch ? locMatch.razon_social : '---';
             }
 
-            tBody.innerHTML += `
+            contenidoHTML += `
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="text-xs text-gray-500 whitespace-nowrap font-mono uppercase">${unicId}</td>
-                    <td class="text-xs text-gray-500 whitespace-nowrap">${fechaStr}</td>
-                    <td class="text-xs text-gray-500 whitespace-nowrap">${horaStr}</td>
                     <td class="font-bold text-slate-700 whitespace-nowrap">${numeroLocal}</td>
                     <td class="text-xs text-slate-600 whitespace-nowrap uppercase">${razonSocial}</td>
                     <td class="text-[9px] font-black uppercase whitespace-nowrap">
                         <span class="${accionEstilo} px-2 py-1 rounded-md flex items-center w-max shadow-sm">${accionVal}</span>
                     </td>
+                    <td class="text-xs text-gray-500 whitespace-nowrap">${fechaStr}</td>
+                    <td class="text-xs text-gray-500 whitespace-nowrap">${horaStr}</td>
                     <td class="text-xs text-gray-600 uppercase whitespace-nowrap">${novedad}</td>
                     <td class="text-xs text-gray-500 max-w-[300px] truncate" title="${observaciones}">${observaciones}</td>
                 </tr>`;
         });
+
+        // Inyectamos todo el HTML al DOM de una sola vez
+        tBody.innerHTML = contenidoHTML;
     }
 
     // ================= LÓGICA DEL FORMULARIO Y DÍAS =================
@@ -1407,7 +1669,14 @@
             }
 
             window.mostrarToast('Éxito', 'Registro guardado correctamente.', 'success');
-            window.navegar('reportes', 'reportes');
+            
+            window.cargarDatosAPI(); 
+            
+            const accionActual = document.getElementById('ACCION').value; 
+            window.prepararFormulario(accionActual, accionActual.toLowerCase()); 
+            
+            const divScrollable = document.getElementById('scrollable-content');
+            if (divScrollable) divScrollable.scrollTop = 0;
 
         } catch(err) {
             console.error("Error completo:", err);
