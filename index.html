@@ -90,7 +90,6 @@
         min-height: 65px; 
         z-index: 9999; 
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-        /* RESTAURADO a 75px: Esto es lo que evitaba que la barra del SO te ocultara el menú */
         padding-bottom: calc(75px + env(safe-area-inset-bottom));
         padding-top: 8px;
     }
@@ -171,23 +170,23 @@
     <div id="modal-local" class="modal-overlay hidden">
         <div class="bg-white rounded-2xl shadow-2xl p-6 w-11/12 max-w-lg relative flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                <h3 class="text-lg font-bold text-slate-800 uppercase tracking-wide" id="titulo-modal-local">NUEVO LOCAL</h3>
+                <h3 class="text-lg font-bold text-slate-800 uppercase tracking-wide" id="titulo-modal-local" data-i18n="newLocal">NUEVO LOCAL</h3>
                 <button type="button" onclick="window.cerrarModalLocal()" class="text-gray-400 hover:text-red-500 transition-colors"><span class="material-icons">close</span></button>
             </div>
             <form id="form-gestion-local" onsubmit="window.guardarLocalConf(event)" class="space-y-5 overflow-y-auto pr-2">
                 <input type="hidden" id="gl_id">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">NÚMERO LOCAL *</label>
+                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase" data-i18n="lblLocalNum">NÚMERO LOCAL *</label>
                     <input type="text" id="gl_numero" required class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 font-bold uppercase text-slate-700">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">RAZÓN SOCIAL *</label>
+                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase" data-i18n="lblBusiness">RAZÓN SOCIAL *</label>
                     <input type="text" id="gl_razon" required class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 uppercase">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">PISO</label>
+                    <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase" data-i18n="lblFloor">PISO</label>
                     <select id="gl_piso" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400 bg-white">
-                        <option value="">Seleccione...</option>
+                        <option value="" data-i18n="phSelect">Seleccione...</option>
                         <option value="Piso 1  - Puerta interna Dollar City">Piso 1</option>
                         <option value="Piso 2">Piso 2</option>
                         <option value="Piso 3">Piso 3</option>
@@ -195,29 +194,29 @@
                         <option value="Piso 5">Piso 5</option>
                         <option value="Piso 6">Piso 6</option>
                         <option value="Piso 7">Piso 7</option> 
-                       <option value="Piso Exito">Piso Exito</option>
-                      <option value="Piso 1">Piso 1</option>
-                      <option value="Piso 2">Piso 2</option>
-                      <option value="Piso 3">Piso 3</option>
-                      <option value="Patio Soacha Viejo">Patio Soacha Viejo</option>
-                      <option value="Bulk Training proyecto nemecon">Piso Bulk Training proyecto nemecon </option> 
+                        <option value="Piso Exito">Piso Exito</option>
+                        <option value="Piso 1">Piso 1</option>
+                        <option value="Piso 2">Piso 2</option>
+                        <option value="Piso 3">Piso 3</option>
+                        <option value="Patio Soacha Viejo">Patio Soacha Viejo</option>
+                        <option value="Bulk Training proyecto nemecon">Piso Bulk Training proyecto nemecon </option> 
                         <option value="Mezanine">Mezanine</option>
                         <option value="Sotano">Sótano</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">HORARIO</label>
-                        <input type="text" id="gl_horario" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: 10am a 08pm">
+                        <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase" data-i18n="lblSchedule">HORARIO</label>
+                        <input type="text" id="gl_horario" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: 10am a 08pm" data-i18n="phSchedule">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase">DÍAS SEMANA</label>
-                        <input type="text" id="gl_dias" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: Lunes a Sábado">
+                        <label class="text-[10px] font-bold text-gray-500 mb-1 block uppercase" data-i18n="lblDays">DÍAS SEMANA</label>
+                        <input type="text" id="gl_dias" class="w-full p-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-slate-400" placeholder="Ej: Lunes a Sábado" data-i18n="phDays">
                     </div>
                 </div>
                 <div class="pt-4 flex justify-between gap-4 mt-2 border-t border-gray-100">
-                    <button type="button" onclick="window.cerrarModalLocal()" class="flex-1 font-bold text-xs text-gray-600 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">CANCELAR</button>
-                    <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider transition-colors">GUARDAR</button>
+                    <button type="button" onclick="window.cerrarModalLocal()" class="flex-1 font-bold text-xs text-gray-600 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" data-i18n="btnCancel">CANCELAR</button>
+                    <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider transition-colors" data-i18n="btnSave">GUARDAR</button>
                 </div>
             </form>
         </div>
@@ -226,7 +225,7 @@
     <div id="modal-imagenes" class="fixed inset-0 bg-slate-900/90 z-[11000] hidden flex flex-col items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden relative">
             <div class="bg-slate-800 p-3 flex justify-between items-center shrink-0">
-                <span class="text-white font-bold text-xs uppercase flex items-center gap-2"><span class="material-icons text-sm">photo_library</span> Evidencia Fotográfica</span>
+                <span class="text-white font-bold text-xs uppercase flex items-center gap-2"><span class="material-icons text-sm">photo_library</span> <span data-i18n="modPhotoTitle">Evidencia Fotográfica</span></span>
                 <button onclick="document.getElementById('modal-imagenes').classList.add('hidden')" class="text-gray-400 hover:text-white bg-slate-700 p-1 rounded-full transition-colors"><span class="material-icons text-sm">close</span></button>
             </div>
             <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-gray-50" id="contenedor-imagenes">
@@ -237,7 +236,7 @@
     <div id="modal-toast" class="fixed bottom-40 md:bottom-6 right-6 z-[12000] hidden transform transition-all duration-300 translate-y-10 opacity-0">
         <div class="bg-slate-800 text-white px-5 py-3 rounded-lg shadow-2xl flex items-center gap-3 min-w-[300px]">
             <div id="toast-icon" class="text-green-400 flex items-center justify-center"><span class="material-icons">check_circle</span></div>
-            <div><h4 id="toast-title" class="font-bold text-sm uppercase">Notificación</h4><p id="toast-msg" class="text-xs text-slate-300">Mensaje</p></div>
+            <div><h4 id="toast-title" class="font-bold text-sm uppercase" data-i18n="lblNotification">Notificación</h4><p id="toast-msg" class="text-xs text-slate-300">Mensaje</p></div>
         </div>
     </div>
 
@@ -246,17 +245,17 @@
             <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-icons text-3xl text-red-600">power_settings_new</span>
             </div>
-            <h3 class="text-lg font-black text-slate-800 mb-2">¿Cerrar Sesión?</h3>
-            <p class="text-xs text-gray-500 mb-6 font-medium">Estás a punto de salir de la aplicación. Deberás ingresar tus credenciales nuevamente.</p>
+            <h3 class="text-lg font-black text-slate-800 mb-2" data-i18n="modLogTitle">¿Cerrar Sesión?</h3>
+            <p class="text-xs text-gray-500 mb-6 font-medium" data-i18n="modLogDesc">Estás a punto de salir de la aplicación. Deberás ingresar tus credenciales nuevamente.</p>
             <div class="flex gap-3">
-                <button onclick="window.cerrarModal('modal-logout')" class="flex-1 py-3 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 uppercase tracking-wide transition-colors">Cancelar</button>
-                <button onclick="window.realizarLogout()" class="flex-1 py-3 bg-red-600 text-white rounded-xl text-xs font-bold hover:bg-red-700 shadow-lg shadow-red-200 uppercase tracking-wide transition-colors">Sí, Salir</button>
+                <button onclick="window.cerrarModal('modal-logout')" class="flex-1 py-3 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 uppercase tracking-wide transition-colors" data-i18n="btnCancel">Cancelar</button>
+                <button onclick="window.realizarLogout()" class="flex-1 py-3 bg-red-600 text-white rounded-xl text-xs font-bold hover:bg-red-700 shadow-lg shadow-red-200 uppercase tracking-wide transition-colors" data-i18n="btnYesLogout">Sí, Salir</button>
             </div>
         </div>
     </div>
     <div id="loader" class="hidden">
         <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mb-4"></div>
-        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Procesando...</p>
+        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest" data-i18n="txtProcessing">Procesando...</p>
     </div>
 
     <header class="mobile-header bg-white border-b px-4 py-3 flex justify-between items-center z-40 shadow-sm h-[60px]">
@@ -269,19 +268,19 @@
         <aside id="sidebar">
             <nav class="mt-4 px-2 space-y-1">
                 <div onclick="window.prepararFormulario('APERTURA', 'apertura')" class="nav-item active rounded-lg" data-target="apertura">
-                    <span class="material-icons text-[20px] mr-3">login</span> Apertura
+                    <span class="material-icons text-[20px] mr-3">login</span> <span data-i18n="navOpen">Apertura</span>
                 </div>
                 <div onclick="window.prepararFormulario('CIERRE', 'cierre')" class="nav-item rounded-lg" data-target="cierre">
-                    <span class="material-icons text-[20px] mr-3">logout</span> Cierre
+                    <span class="material-icons text-[20px] mr-3">logout</span> <span data-i18n="navClose">Cierre</span>
                 </div>
                 <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="nav-item rounded-lg" data-target="gestion_locales">
-                    <span class="material-icons text-[20px] mr-3">store</span> Gestión Locales
+                    <span class="material-icons text-[20px] mr-3">store</span> <span data-i18n="navManage">Gestión Locales</span>
                 </div>
                 <div onclick="window.navegar('reportes', 'reportes')" class="nav-item rounded-lg" data-target="reportes">
-                    <span class="material-icons text-[20px] mr-3">history</span> Reportes
+                    <span class="material-icons text-[20px] mr-3">history</span> <span data-i18n="navReports">Reportes</span>
                 </div>
                 <div onclick="window.navegar('dashboard', 'dashboard')" class="nav-item rounded-lg" data-target="dashboard">
-                    <span class="material-icons text-[20px] mr-3">dashboard</span> Dashboard
+                    <span class="material-icons text-[20px] mr-3">dashboard</span> <span data-i18n="navDashboard">Dashboard</span>
                 </div>
             </nav>
             <div class="p-4 border-t border-gray-100 mt-auto bg-white">
@@ -290,10 +289,10 @@
                         <span class="material-icons text-sm">person</span>
                     </div>
                     <div class="overflow-hidden">
-                        <p id="user-display" class="text-xs text-slate-700 font-bold truncate" data-server-email="{{ user.email }}">Cargando usuario...</p>
+                        <p id="user-display" class="text-xs text-slate-700 font-bold truncate" data-server-email="{{ user.email }}" data-i18n="lblLoadingUser">Cargando usuario...</p>
                     </div>
                 </div>
-                <button class="w-full flex items-center text-red-600 font-bold text-xs uppercase hover:bg-red-50 p-2 rounded transition" onclick="window.confirmarLogout()"><span class="material-icons text-sm mr-2">exit_to_app</span> Salir</button>
+                <button class="w-full flex items-center text-red-600 font-bold text-xs uppercase hover:bg-red-50 p-2 rounded transition" onclick="window.confirmarLogout()"><span class="material-icons text-sm mr-2">exit_to_app</span> <span data-i18n="btnLogout">Salir</span></button>
             </div>
         </aside>
 
@@ -306,19 +305,19 @@
                 <div class="fixed bottom-[160px] right-4 flex flex-col gap-3 z-[9000] md:hidden">
                     <button onclick="window.prepararFormulario('APERTURA', 'apertura')" class="bg-green-600 text-white w-14 h-14 rounded-full shadow-lg flex flex-col items-center justify-center hover:bg-green-700 active:scale-95 transition-transform border-2 border-white">
                         <span class="material-icons text-xl">login</span>
-                        <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider">Apertura</span>
+                        <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider" data-i18n="navOpen">Apertura</span>
                     </button>
                     <button onclick="window.prepararFormulario('CIERRE', 'cierre')" class="bg-red-600 text-white w-14 h-14 rounded-full shadow-lg flex flex-col items-center justify-center hover:bg-red-700 active:scale-95 transition-transform border-2 border-white">
                         <span class="material-icons text-xl">logout</span>
-                        <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider">Cierre</span>
+                        <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider" data-i18n="navClose">Cierre</span>
                     </button>
                 </div>
 
                 <section id="sec-dashboard" class="g4s-section hidden w-full max-w-4xl mx-auto">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-3">
-                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight">Dashboard Operativo</h2>
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight" data-i18n="dashTitle">Dashboard Operativo</h2>
                         <button onclick="window.cargarDatosAPI()" class="bg-white border border-gray-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-2">
-                            <span class="material-icons text-sm">refresh</span> Actualizar
+                            <span class="material-icons text-sm">refresh</span> <span data-i18n="btnRefresh">Actualizar</span>
                         </button>
                     </div>
 
@@ -326,27 +325,27 @@
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
                             <span class="material-icons text-blue-500 mb-2">storefront</span>
                             <span class="text-3xl font-black text-slate-800" id="dash-total-locales">0</span>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Locales Registrados</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center" data-i18n="dashTotalLocales">Locales Registrados</span>
                         </div>
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
                             <span class="material-icons text-green-500 mb-2">login</span>
                             <span class="text-3xl font-black text-slate-800" id="dash-aperturas">0</span>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Aperturas Hoy</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center" data-i18n="dashOpenToday">Aperturas Hoy</span>
                         </div>
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
                             <span class="material-icons text-red-500 mb-2">logout</span>
                             <span class="text-3xl font-black text-slate-800" id="dash-cierres">0</span>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Cierres Hoy</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center" data-i18n="dashCloseToday">Cierres Hoy</span>
                         </div>
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center">
                             <span class="material-icons text-orange-500 mb-2">warning</span>
                             <span class="text-3xl font-black text-slate-800" id="dash-novedades">0</span>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center">Novedades Hoy</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mt-1 text-center" data-i18n="dashNovToday">Novedades Hoy</span>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 flex items-center gap-2"><span class="material-icons text-sm">donut_large</span> Estado Operativo del Día</h3>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 flex items-center gap-2"><span class="material-icons text-sm">donut_large</span> <span data-i18n="dashOpStatus">Estado Operativo del Día</span></h3>
                         <div class="w-full bg-gray-100 rounded-full h-4 mb-2 overflow-hidden flex">
                             <div id="bar-abiertos" class="bg-green-500 h-4 transition-all duration-500" style="width: 0%"></div>
                             <div id="bar-cerrados" class="bg-gray-300 h-4 transition-all duration-500" style="width: 100%"></div>
@@ -365,24 +364,24 @@
                             <button type="button" onclick="window.navegar('reportes', 'reportes')" class="bg-gray-100 p-2 rounded-full text-slate-600 hover:bg-gray-200 transition">
                                 <span class="material-icons text-sm">arrow_back</span>
                             </button>
-                            <h2 id="form-main-title" class="text-lg md:text-xl font-bold text-slate-800">NUEVO REGISTRO</h2>
+                            <h2 id="form-main-title" class="text-lg md:text-xl font-bold text-slate-800" data-i18n="formTitle">NUEVO REGISTRO</h2>
                         </div>
                         
                         <form id="form-registro" onsubmit="window.enviarFormulario(event)" class="space-y-4 md:space-y-5">
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="form-label">SITIO *</label>
+                                    <label class="form-label" data-i18n="lblSite">SITIO *</label>
                                     <input type="text" id="SITIO" value="CENTRO COMERCIAL FUNDADORES - PROPIEDAD HORIZONTAL" readonly class="form-input font-bold text-slate-600 text-xs md:text-sm truncate">
                                 </div>
                                 <div>
-                                    <label class="form-label">ACCIÓN QUE REPORTA *</label>
+                                    <label class="form-label" data-i18n="lblAction">ACCIÓN QUE REPORTA *</label>
                                     <input type="text" id="ACCION" readonly class="form-input font-bold text-red-600 text-xs md:text-sm">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="form-label">USUARIO REPORTA *</label>
+                                <label class="form-label" data-i18n="lblUserReport">USUARIO REPORTA *</label>
                                 <input type="text" id="USUARIO_ACTUAL" readonly class="form-input bg-gray-100 font-semibold cursor-not-allowed text-xs md:text-sm truncate">
                             </div>
 
@@ -390,8 +389,8 @@
                                 
                                 <div class="col-span-1 md:col-span-2">
                                     <div id="contenedor-buscador-local" class="relative">
-                                        <label class="form-label">NÚMERO DEL LOCAL *</label>
-                                        <input type="text" id="BUSCADOR_LOCAL" class="form-input uppercase bg-white cursor-text text-sm" placeholder="BUSCAR O SELECCIONAR..." autocomplete="off" required>
+                                        <label class="form-label" data-i18n="lblLocalNum">NÚMERO DEL LOCAL *</label>
+                                        <input type="text" id="BUSCADOR_LOCAL" class="form-input uppercase bg-white cursor-text text-sm" placeholder="BUSCAR O SELECCIONAR..." data-i18n="phSearchLocal" autocomplete="off" required>
                                         <input type="hidden" id="NUMERO_LOCAL" value="">
                                         <div id="dropdown-locales" class="hidden absolute z-50 w-full bg-white border border-gray-200 shadow-xl rounded-lg mt-1 max-h-48 overflow-y-auto left-0" style="top: calc(100% - 4px);">
                                             </div>
@@ -399,16 +398,16 @@
                                     
                                     <div id="info-operativa-local" class="hidden mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4 transition-all duration-300">
                                         <div class="text-blue-800 font-bold text-xs uppercase flex items-center gap-1 mb-3">
-                                            <span class="material-icons text-sm">info</span> INFORMACIÓN OPERATIVA
+                                            <span class="material-icons text-sm">info</span> <span data-i18n="lblOpInfo">INFORMACIÓN OPERATIVA</span>
                                         </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <div class="text-[10px] font-bold text-blue-400 uppercase mb-1">HORARIO</div>
-                                                <div id="info-horario" class="text-xs text-blue-900 font-medium">No registrado</div>
+                                                <div class="text-[10px] font-bold text-blue-400 uppercase mb-1" data-i18n="lblSchedule">HORARIO</div>
+                                                <div id="info-horario" class="text-xs text-blue-900 font-medium" data-i18n="txtNotRegistered">No registrado</div>
                                             </div>
                                             <div>
-                                                <div class="text-[10px] font-bold text-blue-400 uppercase mb-1">DÍAS</div>
-                                                <div id="info-dias" class="text-xs text-blue-900 font-medium">No registrado</div>
+                                                <div class="text-[10px] font-bold text-blue-400 uppercase mb-1" data-i18n="lblDays">DÍAS</div>
+                                                <div id="info-dias" class="text-xs text-blue-900 font-medium" data-i18n="txtNotRegistered">No registrado</div>
                                             </div>
                                         </div>
                                     </div>
@@ -418,18 +417,18 @@
                             <input type="hidden" id="DIA_SEMANA" value="">
 
                             <div class="col-span-1 md:col-span-2">
-                                <label class="form-label">REPORTE DE NOVEDAD *</label>
+                                <label class="form-label" data-i18n="lblNovelty">REPORTE DE NOVEDAD *</label>
                                 <input type="hidden" id="NOVEDAD" value="SIN NOVEDAD">
                                 <div class="toggle-group">
-                                    <button type="button" id="btn-sin-novedad" onclick="window.setNovedad('SIN NOVEDAD')" class="toggle-btn active">SIN NOVEDAD</button>
-                                    <button type="button" id="btn-fuera-horario" onclick="window.setNovedad('FUERA DE HORARIO')" class="toggle-btn inactive border-l border-gray-200">FUERA DE HORARIO</button>
+                                    <button type="button" id="btn-sin-novedad" onclick="window.setNovedad('SIN NOVEDAD')" class="toggle-btn active" data-i18n="btnNoNovelty">SIN NOVEDAD</button>
+                                    <button type="button" id="btn-fuera-horario" onclick="window.setNovedad('FUERA DE HORARIO')" class="toggle-btn inactive border-l border-gray-200" data-i18n="btnOutHours">FUERA DE HORARIO</button>
                                 </div>
                             </div>
 
                             <div id="seccion-fotos" class="hidden space-y-3 pt-2">
                                 <label id="lbl-foto1" class="w-full h-[100px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors bg-white relative overflow-hidden">
                                     <span class="material-icons text-gray-400 mb-1" id="icn-foto1">camera_alt</span>
-                                    <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto1">FOTO 01 (OBLIGATORIA)</span>
+                                    <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto1" data-i18n="lblPhoto1">FOTO 01 (OBLIGATORIA)</span>
                                     <img id="preview-foto1" class="absolute inset-0 w-full h-full object-cover hidden">
                                     <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.procesarFoto(this, 'foto_1', 'lbl-foto1', 'icn-foto1', 'txt-foto1', 'preview-foto1')">
                                 </label>
@@ -437,13 +436,13 @@
                                 <div class="flex gap-3">
                                     <label id="lbl-foto2" class="flex-1 h-[80px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors bg-white relative overflow-hidden">
                                         <span class="material-icons text-gray-400 mb-1" id="icn-foto2">add_a_photo</span>
-                                        <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto2">FOTO 02</span>
+                                        <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto2" data-i18n="lblPhoto2">FOTO 02</span>
                                         <img id="preview-foto2" class="absolute inset-0 w-full h-full object-cover hidden">
                                         <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.procesarFoto(this, 'foto_2', 'lbl-foto2', 'icn-foto2', 'txt-foto2', 'preview-foto2')">
                                     </label>
                                     <label id="lbl-foto3" class="flex-1 h-[80px] border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors bg-white relative overflow-hidden">
                                         <span class="material-icons text-gray-400 mb-1" id="icn-foto3">add_a_photo</span>
-                                        <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto3">FOTO 03</span>
+                                        <span class="text-[10px] font-bold text-gray-400 z-10" id="txt-foto3" data-i18n="lblPhoto3">FOTO 03</span>
                                         <img id="preview-foto3" class="absolute inset-0 w-full h-full object-cover hidden">
                                         <input type="file" accept="image/*" capture="environment" class="hidden" onchange="window.procesarFoto(this, 'foto_3', 'lbl-foto3', 'icn-foto3', 'txt-foto3', 'preview-foto3')">
                                     </label>
@@ -451,14 +450,14 @@
                             </div>
 
                             <div>
-                                <label class="form-label">OBSERVACIONES</label>
-                                <textarea id="OBSERVACIONES" rows="3" class="form-input resize-none" placeholder="Escriba aquí..."></textarea>
+                                <label class="form-label" data-i18n="lblObs">OBSERVACIONES</label>
+                                <textarea id="OBSERVACIONES" rows="3" class="form-input resize-none" placeholder="Escriba aquí..." data-i18n="phObs"></textarea>
                             </div>
 
                             <div>
-                                <label class="form-label">GPS *</label>
+                                <label class="form-label" data-i18n="lblGPS">GPS *</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="GPS" required readonly class="form-input flex-1 font-mono text-xs text-center tracking-wider" placeholder="Cargando ubicación...">
+                                    <input type="text" id="GPS" required readonly class="form-input flex-1 font-mono text-xs text-center tracking-wider" placeholder="Cargando ubicación..." data-i18n="phGPS">
                                     <button type="button" onclick="window.obtenerGPS()" class="w-[50px] bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition">
                                         <span class="material-icons">my_location</span>
                                     </button>
@@ -466,8 +465,8 @@
                             </div>
 
                             <div class="pt-6 flex gap-4">
-                                <button type="button" onclick="window.navegar('reportes', 'reportes')" class="flex-1 font-bold text-xs text-gray-500 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg">CANCELAR</button>
-                                <button type="submit" class="flex-1 btn-g4s text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider">GUARDAR</button>
+                                <button type="button" onclick="window.navegar('reportes', 'reportes')" class="flex-1 font-bold text-xs text-gray-500 py-3 uppercase tracking-wider text-center border border-gray-200 rounded-lg" data-i18n="btnCancel">CANCELAR</button>
+                                <button type="submit" class="flex-1 btn-g4s text-white font-bold py-3 rounded-lg text-xs uppercase shadow-md flex items-center justify-center tracking-wider" data-i18n="btnSave">GUARDAR</button>
                             </div>
                         </form>
                     </div>
@@ -475,14 +474,14 @@
 
                 <section id="sec-reportes" class="g4s-section w-full hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight">Reportes de Registros</h2>
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight" data-i18n="repTitle">Reportes de Registros</h2>
                         
                         <div class="flex items-center gap-2 flex-wrap justify-end">
                             <input type="date" id="reportes-fecha-desde" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Desde">
                             <input type="date" id="reportes-fecha-hasta" class="p-2 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-slate-400 shadow-sm" title="Fecha Hasta">
                             
                             <button onclick="window.ejecutarFiltroReportes()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-1" title="Buscar">
-                                <span class="material-icons text-sm">search</span> Buscar
+                                <span class="material-icons text-sm">search</span> <span data-i18n="btnSearch">Buscar</span>
                             </button>
 
                             <button onclick="window.limpiarFiltrosReportes()" class="bg-gray-100 text-slate-600 border border-gray-200 px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-gray-200 transition-colors shadow-sm flex items-center gap-1" title="Limpiar Filtros">
@@ -490,14 +489,14 @@
                             </button>
 
                             <button onclick="window.descargarExcel('Reportes_G4S')" class="bg-green-600 text-white px-3 py-2 rounded-lg text-xs font-bold uppercase hover:bg-green-700 transition-colors shadow-sm flex items-center gap-1">
-                                <span class="material-icons text-sm">table_view</span> <span class="text-xs font-bold uppercase hidden md:inline">Excel</span>
+                                <span class="material-icons text-sm">table_view</span> <span class="text-xs font-bold uppercase hidden md:inline" data-i18n="btnExcel">Excel</span>
                             </button>
                         </div>
                         
                     </div>
                     
                     <div class="mb-4 flex gap-2">
-                        <input type="text" id="filtro-reportes-local" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar por número de local o razón social...">
+                        <input type="text" id="filtro-reportes-local" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar por número de local o razón social..." data-i18n="phSearchRep">
                         <button onclick="window.ejecutarFiltroReportes()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-slate-900 transition-colors shadow-sm flex items-center shrink-0">
                             <span class="material-icons text-sm">search</span>
                         </button>
@@ -507,18 +506,18 @@
                         <table class="g4s-table" id="tabla-reportes-gestion">
                             <thead>
                                 <tr>
-                                    <th>UNICID</th>
-                                    <th>Local</th>
-                                    <th>Razón Social</th>
-                                    <th>Acción</th>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Novedad</th>
-                                    <th>Observaciones</th>
+                                    <th data-i18n="thUnicid">UNICID</th>
+                                    <th data-i18n="thLocal">Local</th>
+                                    <th data-i18n="thBusiness">Razón Social</th>
+                                    <th data-i18n="thAction">Acción</th>
+                                    <th data-i18n="thDate">Fecha</th>
+                                    <th data-i18n="thTime">Hora</th>
+                                    <th data-i18n="thNovelty">Novedad</th>
+                                    <th data-i18n="thObs">Observaciones</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-historico-body">
-                                <tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>
+                                <tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold" id="txt-use-search">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -526,32 +525,32 @@
 
                 <section id="sec-gestion_locales" class="g4s-section hidden w-full">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight uppercase italic">Edición Locales</h2>
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight uppercase italic" data-i18n="manTitle">Edición Locales</h2>
                         
                         <div class="flex items-center gap-2 flex-wrap justify-end">
                             <button onclick="window.abrirModalLocal()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
-                                <span class="material-icons text-sm">add</span> Nuevo
+                                <span class="material-icons text-sm">add</span> <span data-i18n="btnNew">Nuevo</span>
                             </button>
                         </div>
                         
                     </div>
                     <div class="mb-4">
-                        <input type="text" id="filtro-locales" onkeyup="window.filtrarTablaLocales()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar local para editar...">
+                        <input type="text" id="filtro-locales" onkeyup="window.filtrarTablaLocales()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar local para editar..." data-i18n="phSearchMan">
                     </div>
                     <div class="table-scroll" style="min-width: 100%;">
                         <table class="g4s-table" id="tabla-locales-gestion">
                             <thead>
                                 <tr>
-                                    <th>Número</th>
-                                    <th>Razón Social</th>
-                                    <th>Piso</th>
-                                    <th>Horario</th>
-                                    <th>Días</th>
-                                    <th class="text-center">Acción</th>
+                                    <th data-i18n="thNum">Número</th>
+                                    <th data-i18n="thBusiness">Razón Social</th>
+                                    <th data-i18n="thFloor">Piso</th>
+                                    <th data-i18n="thSchedule">Horario</th>
+                                    <th data-i18n="thDays">Días</th>
+                                    <th class="text-center" data-i18n="thActionRow">Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-locales">
-                                <tr><td colspan="6" class="text-center text-gray-400 py-6 italic">Cargando locales...</td></tr>
+                                <tr><td colspan="6" class="text-center text-gray-400 py-6 italic" data-i18n="txtLoadingLocals">Cargando locales...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -563,18 +562,122 @@
 
     <nav id="bottom-nav">
         <div onclick="window.navegar('dashboard', 'dashboard')" class="bottom-nav-item" data-target="dashboard">
-            <span class="material-icons">dashboard</span><span>Inicio</span>
+            <span class="material-icons">dashboard</span><span data-i18n="navDashboard">Inicio</span>
         </div>
         <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="bottom-nav-item" data-target="gestion_locales">
-            <span class="material-icons">store</span><span>Locales</span>
+            <span class="material-icons">store</span><span data-i18n="navManage">Locales</span>
         </div>
         <div onclick="window.navegar('reportes', 'reportes')" class="bottom-nav-item" data-target="reportes">
-            <span class="material-icons">history</span><span>Reportes</span>
+            <span class="material-icons">history</span><span data-i18n="navReports">Reportes</span>
         </div>
     </nav>
 </div>
 
 <script>
+    // ================= TRADUCCIONES =================
+    const translations = {
+        es: {
+            navOpen: "Apertura", navClose: "Cierre", navManage: "Gestión Locales", navReports: "Reportes", navDashboard: "Dashboard",
+            lblLoadingUser: "Cargando usuario...", btnLogout: "Salir", dashTitle: "Dashboard Operativo", btnRefresh: "Actualizar",
+            dashTotalLocales: "Locales Registrados", dashOpenToday: "Aperturas Hoy", dashCloseToday: "Cierres Hoy", dashNovToday: "Novedades Hoy",
+            dashOpStatus: "Estado Operativo del Día", dashOpen: "Abiertos", dashPending: "Pendientes/Cerrados", formTitle: "NUEVO REGISTRO",
+            lblSite: "SITIO *", lblAction: "ACCIÓN QUE REPORTA *", lblUserReport: "USUARIO REPORTA *", lblLocalNum: "NÚMERO DEL LOCAL *",
+            phSearchLocal: "BUSCAR O SELECCIONAR...", lblOpInfo: "INFORMACIÓN OPERATIVA", lblSchedule: "HORARIO", lblDays: "DÍAS SEMANA",
+            txtNotRegistered: "No registrado", lblNovelty: "REPORTE DE NOVEDAD *", btnNoNovelty: "SIN NOVEDAD", btnOutHours: "FUERA DE HORARIO",
+            lblPhoto1: "FOTO 01 (OBLIGATORIA)", lblPhoto2: "FOTO 02", lblPhoto3: "FOTO 03", lblObs: "OBSERVACIONES", phObs: "Escriba aquí...",
+            lblGPS: "GPS *", phGPS: "Cargando ubicación...", btnCancel: "CANCELAR", btnSave: "GUARDAR", repTitle: "Reportes de Registros",
+            btnSearch: "Buscar", btnExcel: "Excel", phSearchRep: "Buscar por número de local o razón social...", thUnicid: "UNICID", thLocal: "Local",
+            thBusiness: "Razón Social", thAction: "Acción", thDate: "Fecha", thTime: "Hora", thNovelty: "Novedad", thObs: "Observaciones",
+            manTitle: "Edición Locales", btnNew: "Nuevo", phSearchMan: "Buscar local para editar...", thNum: "Número", thFloor: "Piso", thSchedule: "Horario",
+            thDays: "Días", thActionRow: "Acción", txtLoadingLocals: "Cargando locales...", newLocal: "NUEVO LOCAL", modLocalNum: "NÚMERO LOCAL *",
+            lblFloor: "PISO", phSelect: "Seleccione...", phSchedule: "Ej: 10am a 08pm", phDays: "Ej: Lunes a Sábado", modPhotoTitle: "Evidencia Fotográfica",
+            lblNotification: "Notificación", modLogTitle: "¿Cerrar Sesión?", modLogDesc: "Estás a punto de salir de la aplicación. Deberás ingresar tus credenciales nuevamente.",
+            btnYesLogout: "Sí, Salir", txtProcessing: "Procesando...", errNoOpen: "NO HAY LOCALES ABIERTOS PARA CERRAR", errAllOpen: "TODOS LOS LOCALES ESTÁN ABIERTOS O NO ENCONTRADOS",
+            errNoFound: "NO SE ENCONTRARON LOCALES VÁLIDOS", readOnly: "Solo lectura", noResultsFilter: "No se encontraron resultados para los filtros aplicados.",
+            noResultsSearch: "No se encontraron resultados en el buscador.", useSearchFilters: "Use el buscador o los filtros de fecha para ver los reportes."
+        },
+        en: {
+            navOpen: "Open", navClose: "Close", navManage: "Manage Locales", navReports: "Reports", navDashboard: "Dashboard",
+            lblLoadingUser: "Loading user...", btnLogout: "Logout", dashTitle: "Operational Dashboard", btnRefresh: "Refresh",
+            dashTotalLocales: "Registered Locales", dashOpenToday: "Opens Today", dashCloseToday: "Closes Today", dashNovToday: "Novelties Today",
+            dashOpStatus: "Daily Operational Status", dashOpen: "Open", dashPending: "Pending/Closed", formTitle: "NEW RECORD",
+            lblSite: "SITE *", lblAction: "REPORTED ACTION *", lblUserReport: "REPORTING USER *", lblLocalNum: "LOCALE NUMBER *",
+            phSearchLocal: "SEARCH OR SELECT...", lblOpInfo: "OPERATIONAL INFO", lblSchedule: "SCHEDULE", lblDays: "DAYS",
+            txtNotRegistered: "Not registered", lblNovelty: "NOVELTY REPORT *", btnNoNovelty: "NO NOVELTY", btnOutHours: "OUT OF HOURS",
+            lblPhoto1: "PHOTO 01 (MANDATORY)", lblPhoto2: "PHOTO 02", lblPhoto3: "PHOTO 03", lblObs: "OBSERVATIONS", phObs: "Write here...",
+            lblGPS: "GPS *", phGPS: "Loading location...", btnCancel: "CANCEL", btnSave: "SAVE", repTitle: "Record Reports",
+            btnSearch: "Search", btnExcel: "Excel", phSearchRep: "Search by locale number or business name...", thUnicid: "UNICID", thLocal: "Locale",
+            thBusiness: "Business Name", thAction: "Action", thDate: "Date", thTime: "Time", thNovelty: "Novelty", thObs: "Observations",
+            manTitle: "Edit Locales", btnNew: "New", phSearchMan: "Search locale to edit...", thNum: "Number", thFloor: "Floor", thSchedule: "Schedule",
+            thDays: "Days", thActionRow: "Action", txtLoadingLocals: "Loading locales...", newLocal: "NEW LOCALE", modLocalNum: "LOCALE NUMBER *",
+            lblFloor: "FLOOR", phSelect: "Select...", phSchedule: "E.g: 10am to 8pm", phDays: "E.g: Monday to Saturday", modPhotoTitle: "Photographic Evidence",
+            lblNotification: "Notification", modLogTitle: "Logout?", modLogDesc: "You are about to exit the app. You will need to log in again.",
+            btnYesLogout: "Yes, Logout", txtProcessing: "Processing...", errNoOpen: "NO OPEN LOCALES TO CLOSE", errAllOpen: "ALL LOCALES ARE OPEN OR NOT FOUND",
+            errNoFound: "NO VALID LOCALES FOUND", readOnly: "Read only", noResultsFilter: "No results found for applied filters.",
+            noResultsSearch: "No results found in search.", useSearchFilters: "Use search or date filters to view reports."
+        },
+        pt: {
+            navOpen: "Abertura", navClose: "Fechamento", navManage: "Gestão de Locais", navReports: "Relatórios", navDashboard: "Painel",
+            lblLoadingUser: "Carregando usuário...", btnLogout: "Sair", dashTitle: "Painel Operacional", btnRefresh: "Atualizar",
+            dashTotalLocales: "Locais Registrados", dashOpenToday: "Aberturas Hoje", dashCloseToday: "Fechamentos Hoje", dashNovToday: "Novidades Hoje",
+            dashOpStatus: "Status Operacional Diário", dashOpen: "Abertos", dashPending: "Pendentes/Fechados", formTitle: "NOVO REGISTRO",
+            lblSite: "LOCAL *", lblAction: "AÇÃO RELATADA *", lblUserReport: "USUÁRIO RELATOR *", lblLocalNum: "NÚMERO DO LOCAL *",
+            phSearchLocal: "BUSCAR OU SELECIONAR...", lblOpInfo: "INFORMAÇÃO OPERACIONAL", lblSchedule: "HORÁRIO", lblDays: "DIAS",
+            txtNotRegistered: "Não registrado", lblNovelty: "RELATÓRIO DE NOVIDADE *", btnNoNovelty: "SEM NOVIDADE", btnOutHours: "FORA DO HORÁRIO",
+            lblPhoto1: "FOTO 01 (OBRIGATÓRIA)", lblPhoto2: "FOTO 02", lblPhoto3: "FOTO 03", lblObs: "OBSERVAÇÕES", phObs: "Escreva aqui...",
+            lblGPS: "GPS *", phGPS: "Carregando localização...", btnCancel: "CANCELAR", btnSave: "SALVAR", repTitle: "Relatórios de Registros",
+            btnSearch: "Buscar", btnExcel: "Excel", phSearchRep: "Buscar por número de local ou nome comercial...", thUnicid: "UNICID", thLocal: "Local",
+            thBusiness: "Nome Comercial", thAction: "Ação", thDate: "Data", thTime: "Hora", thNovelty: "Novidade", thObs: "Observações",
+            manTitle: "Edição de Locais", btnNew: "Novo", phSearchMan: "Buscar local para editar...", thNum: "Número", thFloor: "Andar", thSchedule: "Horário",
+            thDays: "Dias", thActionRow: "Ação", txtLoadingLocals: "Carregando locais...", newLocal: "NOVO LOCAL", modLocalNum: "NÚMERO DO LOCAL *",
+            lblFloor: "ANDAR", phSelect: "Selecione...", phSchedule: "Ex: 10h às 20h", phDays: "Ex: Segunda a Sábado", modPhotoTitle: "Evidência Fotográfica",
+            lblNotification: "Notificação", modLogTitle: "Sair?", modLogDesc: "Você está prestes a sair do aplicativo. Será necessário fazer login novamente.",
+            btnYesLogout: "Sim, Sair", txtProcessing: "Processando...", errNoOpen: "NENHUM LOCAL ABERTO PARA FECHAR", errAllOpen: "TODOS OS LOCAIS ESTÃO ABERTOS OU NÃO ENCONTRADOS",
+            errNoFound: "NENHUM LOCAL VÁLIDO ENCONTRADO", readOnly: "Somente leitura", noResultsFilter: "Nenhum resultado encontrado para os filtros aplicados.",
+            noResultsSearch: "Nenhum resultado encontrado na busca.", useSearchFilters: "Use a busca ou filtros de data para ver os relatórios."
+        }
+    };
+
+    let currentLang = 'es'; 
+    let currentUserEmail = '';
+
+    const _T = (key) => translations[currentLang] ? translations[currentLang][key] || key : key;
+
+    const updateInterfaceLanguage = () => {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (key) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = _T(key);
+                else el.innerHTML = _T(key);
+            }
+        });
+    }
+
+    async function detectarIdiomaUsuario() {
+        await window.detectarUsuario();
+        if (!currentUserEmail) return;
+        
+        try {
+            const response = await fetch('/api/users');
+            if(response.ok) {
+                const data = await response.json();
+                const users = Array.isArray(data) ? data : (data.success || []);
+                const userRow = users.find(u => u.email && u.email.toLowerCase() === currentUserEmail.toLowerCase());
+                
+                if (userRow && userRow.language_settings) {
+                    const lang = String(userRow.language_settings).trim().toLowerCase();
+                    if(['es', 'en', 'pt'].includes(lang)) {
+                        currentLang = lang;
+                        updateInterfaceLanguage();
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Error detectando idioma", e);
+        }
+    }
+
+
     // ================= CONFIGURACIÓN Y ESTADO GLOBAL =================
     const API_ROUTE = encodeURI('/api/tb001_001_Apertura de locales?_limit=1000000000');
     const API_LOCALES_ROUTE = encodeURI('/api/tb_config_locales?_limit=10000');
@@ -607,8 +710,8 @@
 
 
     // ================= INICIALIZACIÓN =================
-    function initApp() {
-        window.detectarUsuario(); 
+    async function initApp() {
+        await detectarIdiomaUsuario(); // Detecta usuario, idioma y actualiza la UI
         window.cargarLocalesConfigAPI(); 
         window.cargarDatosAPI();
         window.prepararFormulario('APERTURA', 'apertura');
@@ -640,8 +743,8 @@
         let novedadesCount = 0;
 
         registrosHoy.forEach(r => {
-let num = String(r.numero_local || '').toUpperCase();
-let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
+            let num = String(r.numero_local || '').toUpperCase();
+            let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
             let nov = (r.novedad || 'SIN NOVEDAD').toUpperCase();
 
             if (acc === 'APERTURA') aperturasSet.add(num);
@@ -659,8 +762,8 @@ let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
         document.getElementById('bar-abiertos').style.width = pctAbiertos + '%';
         document.getElementById('bar-cerrados').style.width = (100 - pctAbiertos) + '%';
         
-        document.getElementById('txt-bar-abiertos').innerText = aperturasSet.size + ' Abiertos';
-        document.getElementById('txt-bar-cerrados').innerText = (totalLocales - aperturasSet.size) + ' Pendientes/Cerrados';
+        document.getElementById('txt-bar-abiertos').innerText = `${aperturasSet.size} ${_T('dashOpen')}`;
+        document.getElementById('txt-bar-cerrados').innerText = `${totalLocales - aperturasSet.size} ${_T('dashPending')}`;
     }
 
     // ================= FUNCIÓN PARA DESCARGAR EXCEL OPTIMIZADA =================
@@ -727,8 +830,8 @@ let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
             let num = r.numero_local;
             let acc = r.accion_que_reporta || r.accionid;
             if(num && acc) {
-    localesEstado[String(num).toUpperCase()] = String(acc).toUpperCase();
-}
+                localesEstado[String(num).toUpperCase()] = String(acc).toUpperCase();
+            }
         });
         
         return Object.keys(localesEstado).filter(num => localesEstado[num] === 'APERTURA');
@@ -746,8 +849,8 @@ let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
             let acc = r.accion_que_reporta || r.accionid;
             
            if(num && acc && String(acc).toUpperCase() === 'APERTURA' && fechaR === hoyStr) {
-    abiertosHoy.add(String(num).toUpperCase());
-}
+                abiertosHoy.add(String(num).toUpperCase());
+            }
         });
         
         return Array.from(abiertosHoy);
@@ -768,18 +871,16 @@ let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
         const accionActual = document.getElementById('ACCION') ? document.getElementById('ACCION').value : '';
         let localesAMostrar = localesConfigData;
         
- if (accionActual === 'CIERRE') {
+        if (accionActual === 'CIERRE') {
             const localesAbiertos = window.obtenerLocalesAbiertos();
             localesAMostrar = localesConfigData.filter(loc => {
                 let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : '');
                 return localesAbiertos.includes(String(num).toUpperCase());
             });
- 
-} else if (accionActual === 'APERTURA') {
-            const localesAbiertos = window.obtenerLocalesAbiertos(); // <-- Revisamos el estado actual, no el historial del día
+        } else if (accionActual === 'APERTURA') {
+            const localesAbiertos = window.obtenerLocalesAbiertos(); 
             localesAMostrar = localesConfigData.filter(loc => {
                 let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : '');
-                // Mostrar todos los locales que NO estén abiertos actualmente (es decir, que estén cerrados)
                 return !localesAbiertos.includes(String(num).toUpperCase());
             });
         }
@@ -794,8 +895,7 @@ let acc = String(r.accion_que_reporta || r.accionid || '').toUpperCase();
                 return; 
             }
 
-let text = "";
-            // Esto evita que la app se rompa con locales que son solo números
+            let text = "";
             if (String(num).toUpperCase() !== String(razon).toUpperCase()) {
                 text = `${num} / ${razon}`;
             } else {
@@ -810,8 +910,8 @@ let text = "";
                 inputHidden.value = num;
                 dropdown.classList.add('hidden');
                 
-                infoHorario.innerText = loc.horario || loc.horarioAtencion || 'No registrado';
-                infoDias.innerText = loc.dias_semana || loc['dias Semana'] || loc.dias || 'No registrado';
+                infoHorario.innerText = loc.horario || loc.horarioAtencion || _T('txtNotRegistered');
+                infoDias.innerText = loc.dias_semana || loc['dias Semana'] || loc.dias || _T('txtNotRegistered');
                 infoBox.classList.remove('hidden');
             };
             dropdown.appendChild(div);
@@ -822,7 +922,7 @@ let text = "";
             const msjVacio = document.createElement('div');
             msjVacio.id = 'msg-local-vacio';
             msjVacio.className = 'p-3 text-xs text-gray-400 italic text-center font-bold';
-            msjVacio.innerText = accionActual === 'CIERRE' ? 'NO HAY LOCALES ABIERTOS PARA CERRAR' : (accionActual === 'APERTURA' ? 'TODOS LOS LOCALES ESTÁN ABIERTOS O NO ENCONTRADOS' : 'NO SE ENCONTRARON LOCALES VÁLIDOS');
+            msjVacio.innerText = accionActual === 'CIERRE' ? _T('errNoOpen') : (accionActual === 'APERTURA' ? _T('errAllOpen') : _T('errNoFound'));
             dropdown.appendChild(msjVacio);
         }
     }
@@ -862,7 +962,7 @@ let text = "";
                     msjVacio = document.createElement('div');
                     msjVacio.id = 'msg-local-vacio';
                     msjVacio.className = 'p-3 text-xs text-gray-400 italic text-center font-bold';
-                    msjVacio.innerText = 'NO SE ENCONTRARON LOCALES VÁLIDOS';
+                    msjVacio.innerText = _T('errNoFound');
                     dropdown.appendChild(msjVacio);
                 } else {
                     msjVacio.style.display = 'block';
@@ -917,10 +1017,10 @@ let text = "";
         }
         
         const finalUser = email ? email.toLowerCase().trim() : 'usuario_local';
+        currentUserEmail = finalUser;
         if(userDisplay) userDisplay.innerText = finalUser;
         if(inputFormUser) inputFormUser.value = finalUser.toUpperCase();
 
-        // --- NUEVO: Refrescar tabla para aplicar permisos ---
         if (window.renderizarTablaLocales) {
             window.renderizarTablaLocales();
         }
@@ -947,8 +1047,8 @@ let text = "";
         }
 
         if (vista === 'reportes') {
-            window.datosFiltradosActuales = []; // Limpiamos para evitar exportar datos viejos
-            document.getElementById('tabla-historico-body').innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
+            window.datosFiltradosActuales = []; 
+            document.getElementById('tabla-historico-body').innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
             window.cargarDatosAPI(); 
         }
         if (vista === 'gestion_locales') window.cargarLocalesConfigAPI();
@@ -1009,7 +1109,7 @@ let text = "";
         const tBody = document.getElementById('tbody-locales');
         if(!tBody) return;
         
-        const isAdmin = window.esAdmin(); // Evaluamos permisos
+        const isAdmin = window.esAdmin(); 
 
         // Ocultar o mostrar el botón "NUEVO" según permisos
         const secGestion = document.getElementById('sec-gestion_locales');
@@ -1036,7 +1136,7 @@ let text = "";
         });
 
         if (localesFiltrados.length === 0) {
-            tBody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-400 py-6 italic">No se encontraron resultados en el buscador.</td></tr>';
+            tBody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-400 py-6 italic">${_T('noResultsSearch')}</td></tr>`;
             return;
         }
 
@@ -1049,7 +1149,7 @@ let text = "";
             let id = typeof loc === 'string' ? index : (loc.id || index);
 
             // Control de acceso a botones
-            let botonesAccion = '<span class="text-gray-400 italic text-[10px]">Solo lectura</span>';
+            let botonesAccion = `<span class="text-gray-400 italic text-[10px]">${_T('readOnly')}</span>`;
             
             if (isAdmin) {
                 botonesAccion = `
@@ -1081,7 +1181,6 @@ let text = "";
         window.renderizarTablaLocales();
     }
 
-    // --- NUEVO: abrirModalLocal adaptado para permisos ---
     window.abrirModalLocal = function(id = null) {
         if (!window.esAdmin()) {
             window.mostrarToast('Acceso Denegado', 'No tienes permisos para modificar locales.', 'error');
@@ -1092,7 +1191,7 @@ let text = "";
         const form = document.getElementById('form-gestion-local');
         form.reset();
         
-        document.getElementById('titulo-modal-local').innerText = id !== null ? "EDITAR LOCAL" : "NUEVO LOCAL";
+        document.getElementById('titulo-modal-local').innerText = id !== null ? "EDITAR LOCAL" : _T('newLocal');
 
         if (id !== null) {
             let loc = localesConfigData.find((l, i) => String(l.id || i) === String(id));
@@ -1116,7 +1215,6 @@ let text = "";
         document.getElementById('modal-local').classList.add('hidden');
     }
 
-    // --- NUEVO: guardarLocalConf adaptado para permisos ---
     window.guardarLocalConf = async function(e) {
         e.preventDefault();
         
@@ -1141,10 +1239,9 @@ let text = "";
             let fetchUrl = API_LOCALES_ROUTE;
             
            if (localEditandoId !== null && typeof localesConfigData[0] !== 'string') {
-    // Tomamos la ruta global y la cortamos en el "?" para quitar el "_limit=10000"
-    const rutaBaseLimpia = API_LOCALES_ROUTE.split('?')[0]; 
-    fetchUrl = `${rutaBaseLimpia}/${localEditandoId}`;
-}
+                const rutaBaseLimpia = API_LOCALES_ROUTE.split('?')[0]; 
+                fetchUrl = `${rutaBaseLimpia}/${localEditandoId}`;
+            }
 
             const res = await fetch(fetchUrl, {
                 method: 'POST', 
@@ -1179,7 +1276,6 @@ let text = "";
         }
     }
 
-    // --- NUEVO: función eliminarLocalConf ---
     window.eliminarLocalConf = async function(id, numero) {
         if (!window.esAdmin()) return;
 
@@ -1192,9 +1288,8 @@ let text = "";
 
         try {
             const csrfToken = await window.obtenerCsrfToken();
-            // Hacemos el mismo corte dinámico para asegurar que la URL sea válida
-const rutaBaseLimpia = API_LOCALES_ROUTE.split('?')[0];
-const fetchUrl = `${rutaBaseLimpia}/${id}`;
+            const rutaBaseLimpia = API_LOCALES_ROUTE.split('?')[0];
+            const fetchUrl = `${rutaBaseLimpia}/${id}`;
 
             const res = await fetch(fetchUrl, {
                 method: 'DELETE',
@@ -1252,13 +1347,11 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
         if(inputFiltroLocal) inputFiltroLocal.value = '';
 
         window.datosFiltradosActuales = []; // Vaciamos memoria
-        document.getElementById('tabla-historico-body').innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
+        document.getElementById('tabla-historico-body').innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
     }
 
-    // NUEVA FUNCIÓN: Envuelve renderizarTablas en un setTimeout para no bloquear la UI
     window.ejecutarFiltroReportes = function() {
         document.getElementById('loader').classList.remove('hidden');
-        // Usamos setTimeout para permitir que el loader se muestre antes de congelar el hilo principal
         setTimeout(() => {
             window.renderizarTablas();
             document.getElementById('loader').classList.add('hidden');
@@ -1275,7 +1368,7 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
 
         if (!fechaDesdeInput && !fechaHastaInput && !filtroLocal) {
             window.datosFiltradosActuales = [];
-            tBody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">Use el buscador o los filtros de fecha para ver los reportes.</td></tr>';
+            tBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
             return;
         }
 
@@ -1313,15 +1406,13 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
 
         todosLosDatos.sort((a,b) => new Date(b.datetime||0) - new Date(a.datetime||0));
         
-        // Guardamos en memoria global para el Excel optimizado
         window.datosFiltradosActuales = todosLosDatos;
 
         if (todosLosDatos.length === 0) {
-            tBody.innerHTML = '<tr><td colspan="8" class="text-center text-gray-400 py-6 italic">No se encontraron resultados para los filtros aplicados.</td></tr>';
+            tBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic">${_T('noResultsFilter')}</td></tr>`;
             return;
         }
 
-        // OPTIMIZACIÓN: Acumular HTML en una variable en lugar de sumar al innerHTML en cada ciclo
         let contenidoHTML = '';
 
         todosLosDatos.forEach(r => {
@@ -1361,7 +1452,6 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
                 </tr>`;
         });
 
-        // Inyectamos todo el HTML al DOM de una sola vez
         tBody.innerHTML = contenidoHTML;
     }
 
@@ -1416,6 +1506,10 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
         
         window.generarListaBuscador();
 
+        window.cargarDatosAPI().then(() => {
+            window.generarListaBuscador();
+        });
+
         const contenedorDias = document.getElementById('contenedor-dias');
         const btnTodosDias = document.getElementById('btn-todos-dias');
         const bloqueDias = document.getElementById('bloque-dias-semana');
@@ -1453,8 +1547,8 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
             let text = (num && razon && num.toUpperCase() !== razon.toUpperCase()) ? `${num} / ${razon}` : (razon || num);
             
             inputLocalBuscador.value = text;
-            document.getElementById('info-horario').innerText = localEncontrado.horario || 'No registrado';
-            document.getElementById('info-dias').innerText = localEncontrado.dias_semana || 'No registrado';
+            document.getElementById('info-horario').innerText = localEncontrado.horario || _T('txtNotRegistered');
+            document.getElementById('info-dias').innerText = localEncontrado.dias_semana || _T('txtNotRegistered');
             document.getElementById('info-operativa-local').classList.remove('hidden');
         } else {
             inputLocalBuscador.value = numeroLocal;
@@ -1670,7 +1764,7 @@ const fetchUrl = `${rutaBaseLimpia}/${id}`;
 
             window.mostrarToast('Éxito', 'Registro guardado correctamente.', 'success');
             
-            window.cargarDatosAPI(); 
+            await window.cargarDatosAPI(); 
             
             const accionActual = document.getElementById('ACCION').value; 
             window.prepararFormulario(accionActual, accionActual.toLowerCase()); 
