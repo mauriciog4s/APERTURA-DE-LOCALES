@@ -14,13 +14,12 @@
                 .container, .container-fluid, #page-inner-content, .card, .card-body { padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; height: 100% !important; border: none !important; box-shadow: none !important; background: transparent !important; }
                 #g4s-app-root h1, #g4s-app-root h2, #g4s-app-root h3, #g4s-app-root h4 { display: block !important; }
                 
-                /* ESTRUCTURA FLEX PARA ANCLAR EL MENÚ SIN POSICIONES FLOTANTES */
                 #g4s-app-root { 
                     position: fixed !important; 
                     top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; 
                     width: 100% !important; 
-                    height: 100% !important; /* Salvavidas para navegadores antiguos/WebViews */
-                    height: 100dvh !important; /* Altura dinámica real de la pantalla */
+                    height: 100% !important;
+                    height: 100dvh !important;
                     z-index: 999999 !important; 
                     background-color: #f8fafc !important; 
                     display: flex !important; 
@@ -46,31 +45,12 @@
         font-family: 'Segoe UI', sans-serif;
     }
 
-    /* EL LAYOUT SE LLEVA EL ESPACIO QUE SOBRA ENTRE EL HEADER Y EL MENÚ */
-    .app-layout { 
-        display: flex; 
-        flex: 1 1 auto; 
-        min-height: 0; 
-        overflow: hidden; 
-        position: relative; 
-        width: 100%;
-    }
-
-    #main-content { 
-        flex: 1; 
-        display: flex; 
-        flex-direction: column; 
-        background-color: #f8fafc; 
-        overflow: hidden; 
-    }
-
+    .app-layout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; position: relative; width: 100%; }
+    #main-content { flex: 1; display: flex; flex-direction: column; background-color: #f8fafc; overflow: hidden; }
+    
     #scrollable-content {
-        flex: 1; 
-        overflow-y: auto; 
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch; 
-        padding-bottom: 200px; /* Aumentado para sobrepasar con seguridad el menú alto y los botones flotantes */
-        background-color: #f8fafc;
+        flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; 
+        padding-bottom: 200px; background-color: #f8fafc;
     }
 
     #sidebar {
@@ -78,52 +58,21 @@
         display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; height: 100%;
     }
 
-    /* MENÚ INFERIOR ESTÁTICO */
     #bottom-nav {
-        display: flex; 
-        flex: 0 0 auto; 
-        width: 100%;
-        background: white; 
-        border-top: 1px solid #e2e8f0;
-        justify-content: space-around; 
-        align-items: center; 
-        min-height: 65px; 
-        z-index: 9999; 
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-        padding-bottom: calc(75px + env(safe-area-inset-bottom));
-        padding-top: 8px;
+        display: flex; flex: 0 0 auto; width: 100%; background: white; border-top: 1px solid #e2e8f0;
+        justify-content: space-around; align-items: center; min-height: 65px; z-index: 9999; 
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08); padding-bottom: calc(75px + env(safe-area-inset-bottom)); padding-top: 8px;
     }
 
     .bottom-nav-item {
-        flex: 1; 
-        display: flex; 
-        flex-direction: column;
-        align-items: center; 
-        justify-content: center; 
-        height: 100%; 
-        color: #94a3b8; 
-        font-weight: 600;
-        cursor: pointer; 
-        transition: all 0.2s;
-        min-width: 0;
-        padding: 0 2px;
+        flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        height: 100%; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.2s; min-width: 0; padding: 0 2px;
     }
-    .bottom-nav-item .material-icons { 
-        font-size: 24px; 
-        margin-bottom: 2px; 
-    }
-    .bottom-nav-item span:last-child {
-        width: 100%;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 10px;
-    }
+    .bottom-nav-item .material-icons { font-size: 24px; margin-bottom: 2px; }
+    .bottom-nav-item span:last-child { width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 10px; }
     .bottom-nav-item.active { color: var(--g4s-red); }
     .bottom-nav-item.active .material-icons { transform: translateY(-2px); }
 
-    /* RESPONSIVE */
     .web-only { display: none !important; }
     #sidebar { display: none; }
     .mobile-header { display: flex; flex-shrink: 0; }
@@ -148,7 +97,6 @@
     .hidden { display: none !important; }
     .modal-overlay { position: fixed; inset: 0; z-index: 11000; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
 
-    /* ESTILOS TABLAS Y FORMULARIOS */
     .form-input { width: 100%; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #475569; outline: none; transition: border-color 0.2s; }
     .form-input:focus { border-color: #cbd5e1; }
     .form-input:disabled, .form-input[readonly] { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
@@ -222,14 +170,30 @@
         </div>
     </div>
 
+    <div id="modal-detalle-apertura" class="modal-overlay hidden">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-11/12 max-w-sm relative">
+            <button onclick="window.cerrarModal('modal-detalle-apertura')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"><span class="material-icons">close</span></button>
+            <div class="flex items-center gap-3 mb-4 border-b border-gray-100 pb-3">
+                <span class="material-icons text-blue-600 text-2xl">info</span>
+                <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight" data-i18n="modDetailsTitle">Detalles de Apertura</h3>
+            </div>
+            <div id="contenido-detalle-apertura" class="text-xs text-slate-600 space-y-3"></div>
+            <div class="mt-6 flex gap-2">
+                <button onclick="window.verImagenes(document.getElementById('detalle-apertura-id').value)" class="flex-1 bg-slate-800 text-white rounded-xl text-xs font-bold py-3 hover:bg-slate-900 shadow-lg uppercase tracking-wide transition-colors flex justify-center items-center gap-2">
+                    <span class="material-icons text-sm">photo_library</span> <span data-i18n="btnPhotos">Ver Fotos</span>
+                </button>
+            </div>
+            <input type="hidden" id="detalle-apertura-id">
+        </div>
+    </div>
+
     <div id="modal-imagenes" class="fixed inset-0 bg-slate-900/90 z-[11000] hidden flex flex-col items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden relative">
             <div class="bg-slate-800 p-3 flex justify-between items-center shrink-0">
                 <span class="text-white font-bold text-xs uppercase flex items-center gap-2"><span class="material-icons text-sm">photo_library</span> <span data-i18n="modPhotoTitle">Evidencia Fotográfica</span></span>
                 <button onclick="document.getElementById('modal-imagenes').classList.add('hidden')" class="text-gray-400 hover:text-white bg-slate-700 p-1 rounded-full transition-colors"><span class="material-icons text-sm">close</span></button>
             </div>
-            <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-gray-50" id="contenedor-imagenes">
-            </div>
+            <div class="p-4 overflow-y-auto flex-1 space-y-4 bg-gray-50" id="contenedor-imagenes"></div>
         </div>
     </div>
 
@@ -253,14 +217,14 @@
             </div>
         </div>
     </div>
-    <div id="loader" class="hidden">
+
+    <div id="loader" class="">
         <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-red-600 mb-4"></div>
         <p class="text-xs font-bold text-gray-500 uppercase tracking-widest" data-i18n="txtProcessing">Procesando...</p>
     </div>
 
     <header class="mobile-header bg-white border-b px-4 py-3 flex justify-between items-center z-40 shadow-sm h-[60px]">
-      <div class="flex items-center gap-3">
-      </div>
+      <div class="flex items-center gap-3"></div>
       <button onclick="window.cargarDatosAPI()" class="p-2 text-gray-400 hover:text-red-600 active:bg-gray-100 rounded-full"><span class="material-icons text-xl">sync</span></button>
     </header>
 
@@ -272,6 +236,9 @@
                 </div>
                 <div onclick="window.prepararFormulario('CIERRE', 'cierre')" class="nav-item rounded-lg" data-target="cierre">
                     <span class="material-icons text-[20px] mr-3">logout</span> <span data-i18n="navClose">Cierre</span>
+                </div>
+                <div onclick="window.navegar('locales_apertura', 'locales_apertura')" class="nav-item rounded-lg" data-target="locales_apertura">
+                    <span class="material-icons text-[20px] mr-3">meeting_room</span> <span data-i18n="navOpenLocales">Locales Abiertos</span>
                 </div>
                 <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="nav-item rounded-lg" data-target="gestion_locales">
                     <span class="material-icons text-[20px] mr-3">store</span> <span data-i18n="navManage">Gestión Locales</span>
@@ -297,12 +264,11 @@
         </aside>
 
         <main id="main-content">
-            <div class="fixed-top-section">
-                </div>
+            <div class="fixed-top-section"></div>
 
             <div id="scrollable-content" class="p-2 md:p-8 w-full max-w-full md:max-w-[96%] mx-auto flex justify-center relative">
 
-                <div class="fixed bottom-[160px] right-4 flex flex-col gap-3 z-[9000] md:hidden">
+                <div id="mobile-fab-container" class="fixed bottom-[160px] right-4 flex flex-col gap-3 z-[9000] md:hidden transition-opacity duration-300">
                     <button onclick="window.prepararFormulario('APERTURA', 'apertura')" class="bg-green-600 text-white w-14 h-14 rounded-full shadow-lg flex flex-col items-center justify-center hover:bg-green-700 active:scale-95 transition-transform border-2 border-white">
                         <span class="material-icons text-xl">login</span>
                         <span class="text-[7px] font-bold uppercase mt-0.5 tracking-wider" data-i18n="navOpen">Apertura</span>
@@ -392,8 +358,7 @@
                                         <label class="form-label" data-i18n="lblLocalNum">NÚMERO DEL LOCAL *</label>
                                         <input type="text" id="BUSCADOR_LOCAL" class="form-input uppercase bg-white cursor-text text-sm" placeholder="BUSCAR O SELECCIONAR..." data-i18n="phSearchLocal" autocomplete="off" required>
                                         <input type="hidden" id="NUMERO_LOCAL" value="">
-                                        <div id="dropdown-locales" class="hidden absolute z-50 w-full bg-white border border-gray-200 shadow-xl rounded-lg mt-1 max-h-48 overflow-y-auto left-0" style="top: calc(100% - 4px);">
-                                            </div>
+                                        <div id="dropdown-locales" class="hidden absolute z-50 w-full bg-white border border-gray-200 shadow-xl rounded-lg mt-1 max-h-48 overflow-y-auto left-0" style="top: calc(100% - 4px);"></div>
                                     </div>
                                     
                                     <div id="info-operativa-local" class="hidden mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4 transition-all duration-300">
@@ -472,6 +437,36 @@
                     </div>
                 </section>
 
+                <section id="sec-locales_apertura" class="g4s-section hidden w-full">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                        <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight uppercase italic" data-i18n="openLocTitle">Locales en Apertura</h2>
+                        <div class="flex items-center gap-2 flex-wrap justify-end">
+                            <button onclick="window.cargarDatosAPI().then(() => window.renderizarLocalesAbiertos())" class="bg-white border border-gray-200 text-slate-600 px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-2">
+                                <span class="material-icons text-sm">refresh</span> <span data-i18n="btnRefresh">Actualizar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <input type="text" id="filtro-locales-abiertos" onkeyup="window.renderizarLocalesAbiertos()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar local abierto..." data-i18n="phSearchOpen">
+                    </div>
+                    <div class="table-scroll" style="min-width: 100%;">
+                        <table class="g4s-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="thNum">Número</th>
+                                    <th data-i18n="thBusiness">Razón Social</th>
+                                    <th data-i18n="thFloor">Piso</th>
+                                    <th data-i18n="thSchedule">Horario</th>
+                                    <th class="text-center" data-i18n="thActionRow">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-locales-abiertos">
+                                <tr><td colspan="5" class="text-center text-gray-400 py-6 italic" data-i18n="txtLoadingLocals">Cargando locales...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
                 <section id="sec-reportes" class="g4s-section w-full hidden">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                         <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight" data-i18n="repTitle">Reportes de Registros</h2>
@@ -526,13 +521,11 @@
                 <section id="sec-gestion_locales" class="g4s-section hidden w-full">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                         <h2 class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight uppercase italic" data-i18n="manTitle">Edición Locales</h2>
-                        
                         <div class="flex items-center gap-2 flex-wrap justify-end">
                             <button onclick="window.abrirModalLocal()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
                                 <span class="material-icons text-sm">add</span> <span data-i18n="btnNew">Nuevo</span>
                             </button>
                         </div>
-                        
                     </div>
                     <div class="mb-4">
                         <input type="text" id="filtro-locales" onkeyup="window.filtrarTablaLocales()" class="w-full p-3 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-slate-400 shadow-sm" placeholder="Buscar local para editar..." data-i18n="phSearchMan">
@@ -564,6 +557,9 @@
         <div onclick="window.navegar('dashboard', 'dashboard')" class="bottom-nav-item" data-target="dashboard">
             <span class="material-icons">dashboard</span><span data-i18n="navDashboard">Inicio</span>
         </div>
+        <div onclick="window.navegar('locales_apertura', 'locales_apertura')" class="bottom-nav-item" data-target="locales_apertura">
+            <span class="material-icons">meeting_room</span><span data-i18n="navOpenLocales">Abiertos</span>
+        </div>
         <div onclick="window.navegar('gestion_locales', 'gestion_locales')" class="bottom-nav-item" data-target="gestion_locales">
             <span class="material-icons">store</span><span data-i18n="navManage">Locales</span>
         </div>
@@ -578,6 +574,7 @@
     const translations = {
         es: {
             navOpen: "Apertura", navClose: "Cierre", navManage: "Gestión Locales", navReports: "Reportes", navDashboard: "Dashboard",
+            navOpenLocales: "Locales Abiertos", openLocTitle: "Locales en Apertura", phSearchOpen: "Buscar local abierto...", modDetailsTitle: "Detalles de Apertura", btnPhotos: "Ver Fotos",
             lblLoadingUser: "Cargando usuario...", btnLogout: "Salir", dashTitle: "Dashboard Operativo", btnRefresh: "Actualizar",
             dashTotalLocales: "Locales Registrados", dashOpenToday: "Aperturas Hoy", dashCloseToday: "Cierres Hoy", dashNovToday: "Novedades Hoy",
             dashOpStatus: "Estado Operativo del Día", dashOpen: "Abiertos", dashPending: "Pendientes/Cerrados", formTitle: "NUEVO REGISTRO",
@@ -595,46 +592,6 @@
             btnYesLogout: "Sí, Salir", txtProcessing: "Procesando...", errNoOpen: "NO HAY LOCALES ABIERTOS PARA CERRAR", errAllOpen: "TODOS LOS LOCALES ESTÁN ABIERTOS O NO ENCONTRADOS",
             errNoFound: "NO SE ENCONTRARON LOCALES VÁLIDOS", readOnly: "Solo lectura", noResultsFilter: "No se encontraron resultados para los filtros aplicados.",
             noResultsSearch: "No se encontraron resultados en el buscador.", useSearchFilters: "Use el buscador o los filtros de fecha para ver los reportes."
-        },
-        en: {
-            navOpen: "Open", navClose: "Close", navManage: "Manage Locales", navReports: "Reports", navDashboard: "Dashboard",
-            lblLoadingUser: "Loading user...", btnLogout: "Logout", dashTitle: "Operational Dashboard", btnRefresh: "Refresh",
-            dashTotalLocales: "Registered Locales", dashOpenToday: "Opens Today", dashCloseToday: "Closes Today", dashNovToday: "Novelties Today",
-            dashOpStatus: "Daily Operational Status", dashOpen: "Open", dashPending: "Pending/Closed", formTitle: "NEW RECORD",
-            lblSite: "SITE *", lblAction: "REPORTED ACTION *", lblUserReport: "REPORTING USER *", lblLocalNum: "LOCALE NUMBER *",
-            phSearchLocal: "SEARCH OR SELECT...", lblOpInfo: "OPERATIONAL INFO", lblSchedule: "SCHEDULE", lblDays: "DAYS",
-            txtNotRegistered: "Not registered", lblNovelty: "NOVELTY REPORT *", btnNoNovelty: "NO NOVELTY", btnOutHours: "OUT OF HOURS",
-            lblPhoto1: "PHOTO 01 (MANDATORY)", lblPhoto2: "PHOTO 02", lblPhoto3: "PHOTO 03", lblObs: "OBSERVATIONS", phObs: "Write here...",
-            lblGPS: "GPS *", phGPS: "Loading location...", btnCancel: "CANCEL", btnSave: "SAVE", repTitle: "Record Reports",
-            btnSearch: "Search", btnExcel: "Excel", phSearchRep: "Search by locale number or business name...", thUnicid: "UNICID", thLocal: "Locale",
-            thBusiness: "Business Name", thAction: "Action", thDate: "Date", thTime: "Time", thNovelty: "Novelty", thObs: "Observations",
-            manTitle: "Edit Locales", btnNew: "New", phSearchMan: "Search locale to edit...", thNum: "Number", thFloor: "Floor", thSchedule: "Schedule",
-            thDays: "Days", thActionRow: "Action", txtLoadingLocals: "Loading locales...", newLocal: "NEW LOCALE", modLocalNum: "LOCALE NUMBER *",
-            lblFloor: "FLOOR", phSelect: "Select...", phSchedule: "E.g: 10am to 8pm", phDays: "E.g: Monday to Saturday", modPhotoTitle: "Photographic Evidence",
-            lblNotification: "Notification", modLogTitle: "Logout?", modLogDesc: "You are about to exit the app. You will need to log in again.",
-            btnYesLogout: "Yes, Logout", txtProcessing: "Processing...", errNoOpen: "NO OPEN LOCALES TO CLOSE", errAllOpen: "ALL LOCALES ARE OPEN OR NOT FOUND",
-            errNoFound: "NO VALID LOCALES FOUND", readOnly: "Read only", noResultsFilter: "No results found for applied filters.",
-            noResultsSearch: "No results found in search.", useSearchFilters: "Use search or date filters to view reports."
-        },
-        pt: {
-            navOpen: "Abertura", navClose: "Fechamento", navManage: "Gestão de Locais", navReports: "Relatórios", navDashboard: "Painel",
-            lblLoadingUser: "Carregando usuário...", btnLogout: "Sair", dashTitle: "Painel Operacional", btnRefresh: "Atualizar",
-            dashTotalLocales: "Locais Registrados", dashOpenToday: "Aberturas Hoje", dashCloseToday: "Fechamentos Hoje", dashNovToday: "Novidades Hoje",
-            dashOpStatus: "Status Operacional Diário", dashOpen: "Abertos", dashPending: "Pendentes/Fechados", formTitle: "NOVO REGISTRO",
-            lblSite: "LOCAL *", lblAction: "AÇÃO RELATADA *", lblUserReport: "USUÁRIO RELATOR *", lblLocalNum: "NÚMERO DO LOCAL *",
-            phSearchLocal: "BUSCAR OU SELECIONAR...", lblOpInfo: "INFORMAÇÃO OPERACIONAL", lblSchedule: "HORÁRIO", lblDays: "DIAS",
-            txtNotRegistered: "Não registrado", lblNovelty: "RELATÓRIO DE NOVIDADE *", btnNoNovelty: "SEM NOVIDADE", btnOutHours: "FORA DO HORÁRIO",
-            lblPhoto1: "FOTO 01 (OBRIGATÓRIA)", lblPhoto2: "FOTO 02", lblPhoto3: "FOTO 03", lblObs: "OBSERVAÇÕES", phObs: "Escreva aqui...",
-            lblGPS: "GPS *", phGPS: "Carregando localização...", btnCancel: "CANCELAR", btnSave: "SALVAR", repTitle: "Relatórios de Registros",
-            btnSearch: "Buscar", btnExcel: "Excel", phSearchRep: "Buscar por número de local ou nome comercial...", thUnicid: "UNICID", thLocal: "Local",
-            thBusiness: "Nome Comercial", thAction: "Ação", thDate: "Data", thTime: "Hora", thNovelty: "Novidade", thObs: "Observações",
-            manTitle: "Edição de Locais", btnNew: "Novo", phSearchMan: "Buscar local para editar...", thNum: "Número", thFloor: "Andar", thSchedule: "Horário",
-            thDays: "Dias", thActionRow: "Ação", txtLoadingLocals: "Carregando locais...", newLocal: "NOVO LOCAL", modLocalNum: "NÚMERO DO LOCAL *",
-            lblFloor: "ANDAR", phSelect: "Selecione...", phSchedule: "Ex: 10h às 20h", phDays: "Ex: Segunda a Sábado", modPhotoTitle: "Evidência Fotográfica",
-            lblNotification: "Notificação", modLogTitle: "Sair?", modLogDesc: "Você está prestes a sair do aplicativo. Será necessário fazer login novamente.",
-            btnYesLogout: "Sim, Sair", txtProcessing: "Processando...", errNoOpen: "NENHUM LOCAL ABERTO PARA FECHAR", errAllOpen: "TODOS OS LOCAIS ESTÃO ABERTOS OU NÃO ENCONTRADOS",
-            errNoFound: "NENHUM LOCAL VÁLIDO ENCONTRADO", readOnly: "Somente leitura", noResultsFilter: "Nenhum resultado encontrado para os filtros aplicados.",
-            noResultsSearch: "Nenhum resultado encontrado na busca.", useSearchFilters: "Use a busca ou filtros de data para ver os relatórios."
         }
     };
 
@@ -656,33 +613,14 @@
     async function detectarIdiomaUsuario() {
         await window.detectarUsuario();
         if (!currentUserEmail) return;
-        
-        try {
-            const response = await fetch('/api/users');
-            if(response.ok) {
-                const data = await response.json();
-                const users = Array.isArray(data) ? data : (data.success || []);
-                const userRow = users.find(u => u.email && u.email.toLowerCase() === currentUserEmail.toLowerCase());
-                
-                if (userRow && userRow.language_settings) {
-                    const lang = String(userRow.language_settings).trim().toLowerCase();
-                    if(['es', 'en', 'pt'].includes(lang)) {
-                        currentLang = lang;
-                        updateInterfaceLanguage();
-                    }
-                }
-            }
-        } catch (e) {
-            console.warn("Error detectando idioma", e);
-        }
     }
 
 
-    // ================= CONFIGURACIÓN Y ESTADO GLOBAL =================
-    const API_ROUTE = encodeURI('/api/tb001_001_Apertura de locales?_limit=1000000000');
+    // ================= CONFIGURACIÓN Y ESTADO GLOBAL OPTIMIZADO =================
+    // Ya no usamos el limit exagerado que descargaba todo el historial de la BD
+    const API_ROUTE_BASE = encodeURI('/api/tb001_001_Apertura de locales');
     const API_LOCALES_ROUTE = encodeURI('/api/tb_config_locales?_limit=10000');
 
-    // --- NUEVO: Lista de administradores ---
     const ADMIN_USERS = ['jhoan.gaitan@co.g4s.com', 't3.jorge.posada@co.g4s.com', 'julian.boada@co.g4s.com', '7260348@co.g4s.com', '7262249@co.g4s.com', '7260501@co.g4s.com'];
 
     window.esAdmin = function() {
@@ -696,27 +634,31 @@
         }
         return ADMIN_USERS.includes(usuarioActual);
     };
-    // ---------------------------------------
 
     const localesDefecto = [];
 
-    let registrosData = []; 
+    let registrosData = []; // Solo almacenará los registros de los últimos 3 días (Ahorra MUCHOS datos)
     let localesConfigData = []; 
     let imagenesBase64 = {};
     let localEditandoId = null;
     let buscadorInicializado = false;
-    window.datosFiltradosActuales = []; // Nueva variable global para exportar rápido a Excel
-
+    window.datosFiltradosActuales = []; 
+    
+    let globalGpsPosition = "";
 
 
     // ================= INICIALIZACIÓN =================
     async function initApp() {
-        await detectarIdiomaUsuario(); // Detecta usuario, idioma y actualiza la UI
-        window.cargarLocalesConfigAPI(); 
-        window.cargarDatosAPI();
-        window.prepararFormulario('APERTURA', 'apertura');
+        window.iniciarRastreoGPS();
+
+        await Promise.all([
+            detectarIdiomaUsuario(),
+            window.cargarLocalesConfigAPI(),
+            window.cargarDatosAPI()
+        ]);
         
-        setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
+        window.prepararFormulario('APERTURA', 'apertura', true);
+        setTimeout(() => document.getElementById('loader').classList.add('hidden'), 300);
     }
 
     if (document.readyState === 'loading') {
@@ -766,7 +708,6 @@
         document.getElementById('txt-bar-cerrados').innerText = `${totalLocales - aperturasSet.size} ${_T('dashPending')}`;
     }
 
-    // ================= FUNCIÓN PARA DESCARGAR EXCEL OPTIMIZADA =================
     window.descargarExcel = function(filename) {
         const datos = window.datosFiltradosActuales || [];
         if (datos.length === 0) return window.mostrarToast('Aviso', 'No hay datos para exportar. Ejecute una búsqueda primero.', 'warning');
@@ -823,7 +764,6 @@
     // ================= FUNCION PARA OBTENER LOCALES ABIERTOS =================
     window.obtenerLocalesAbiertos = function() {
         let localesEstado = {};
-        
         let historico = [...registrosData].sort((a,b) => new Date(a.datetime||0) - new Date(b.datetime||0));
         
         historico.forEach(r => {
@@ -835,25 +775,6 @@
         });
         
         return Object.keys(localesEstado).filter(num => localesEstado[num] === 'APERTURA');
-    }
-
-    // ================= FUNCION PARA OBTENER LOCALES ABIERTOS HOY (NUEVA) =================
-    window.obtenerLocalesAbiertosHoy = function() {
-        const hoyStr = new Date().toLocaleDateString('en-CA'); 
-        let abiertosHoy = new Set();
-        
-        registrosData.forEach(r => {
-            if(!r.datetime) return;
-            const fechaR = new Date(r.datetime).toLocaleDateString('en-CA');
-            let num = r.numero_local;
-            let acc = r.accion_que_reporta || r.accionid;
-            
-           if(num && acc && String(acc).toUpperCase() === 'APERTURA' && fechaR === hoyStr) {
-                abiertosHoy.add(String(num).toUpperCase());
-            }
-        });
-        
-        return Array.from(abiertosHoy);
     }
 
     // ================= LOGICA DEL BUSCADOR AUTOCOMPLETADO =================
@@ -886,6 +807,7 @@
         }
 
         let agregados = 0;
+        const fragment = document.createDocumentFragment();
 
         localesAMostrar.forEach(loc => {
             let num = loc.numero_local || loc.numero || (typeof loc === 'string' ? loc : ''); 
@@ -914,9 +836,11 @@
                 infoDias.innerText = loc.dias_semana || loc['dias Semana'] || loc.dias || _T('txtNotRegistered');
                 infoBox.classList.remove('hidden');
             };
-            dropdown.appendChild(div);
+            fragment.appendChild(div);
             agregados++;
         });
+
+        dropdown.appendChild(fragment);
 
         if (agregados === 0) {
             const msjVacio = document.createElement('div');
@@ -990,7 +914,6 @@
         window.buscadorInicializado = true;
     }
 
-    // ================= LECTURA DE USUARIO Y PERMISOS =================
     window.detectarUsuario = async function() {
         const userDisplay = document.getElementById('user-display');
         const inputFormUser = document.getElementById('USUARIO_ACTUAL');
@@ -1026,7 +949,6 @@
         }
     }
 
-    // ================= NAVEGACIÓN =================
     window.navegar = function(vista, menuId) {
         document.querySelectorAll('.g4s-section').forEach(s => s.classList.add('hidden'));
         
@@ -1046,24 +968,32 @@
             bottomItem.style.color = 'var(--g4s-red)'; 
         }
 
+        const fabContainer = document.getElementById('mobile-fab-container');
+        if (fabContainer) {
+            if (secId === 'formulario') {
+                fabContainer.classList.add('hidden');
+            } else {
+                fabContainer.classList.remove('hidden');
+            }
+        }
+
         if (vista === 'reportes') {
             window.datosFiltradosActuales = []; 
             document.getElementById('tabla-historico-body').innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
-            window.cargarDatosAPI(); 
         }
+        if (vista === 'locales_apertura') window.renderizarLocalesAbiertos();
         if (vista === 'gestion_locales') window.cargarLocalesConfigAPI();
         if (vista === 'dashboard') window.actualizarDashboard(); 
     };
 
-    // ================= API GESTIÓN DE LOCALES =================
     window.cargarLocalesConfigAPI = async function() {
         let mergedLocales = [...localesDefecto];
 
         try {
             const res = await fetch(API_LOCALES_ROUTE, {
                 method: 'GET',
-                headers: { 'Accept': 'application/json', 'Cache-Control': 'no-cache' },
-                cache: 'no-store'
+                headers: { 'Accept': 'application/json' }
+                // OPTIMIZACIÓN: Se ha eliminado "cache: 'no-store'" para aprovechar el caché del navegador móvil
             });
             if (res.ok) {
                 const data = await res.json();
@@ -1102,16 +1032,105 @@
         window.renderizarTablaLocales(); 
         window.inicializarBuscadorLocales(); 
         window.actualizarDashboard();
+        
+        if (!document.getElementById('sec-locales_apertura').classList.contains('hidden')) {
+            window.renderizarLocalesAbiertos();
+        }
     }
 
-    // --- NUEVO: renderizarTablaLocales adaptado para permisos ---
+    window.renderizarLocalesAbiertos = function() {
+        const tBody = document.getElementById('tbody-locales-abiertos');
+        if(!tBody) return;
+
+        const filtroTexto = document.getElementById("filtro-locales-abiertos").value.toUpperCase();
+        let contenidoHTML = '';
+
+        const localesAbiertosNros = window.obtenerLocalesAbiertos(); 
+
+        let localesMostrados = localesConfigData.filter(loc => {
+            let num = String(loc.numero_local || '').toUpperCase();
+            return localesAbiertosNros.includes(num);
+        });
+
+        if (filtroTexto) {
+            localesMostrados = localesMostrados.filter(loc => {
+                let num = String(loc.numero_local || '').toUpperCase();
+                let razon = String(loc.razon_social || '').toUpperCase();
+                return num.includes(filtroTexto) || razon.includes(filtroTexto);
+            });
+        }
+
+        if (localesMostrados.length === 0) {
+            tBody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-400 py-6 italic">${_T('noResultsSearch')}</td></tr>`;
+            return;
+        }
+
+        localesMostrados.forEach(loc => {
+            let numero = loc.numero_local || '---';
+            let razon = loc.razon_social || '---';
+            let piso = loc.piso || '---';
+            let horario = loc.horario || '---';
+            let diasStr = loc.dias_semana || loc.dias || '---';
+
+            let historico = [...registrosData].sort((a,b) => new Date(b.datetime||0) - new Date(a.datetime||0));
+            let registroApertura = historico.find(r => String(r.numero_local).toUpperCase() === String(numero).toUpperCase() && (r.accion_que_reporta === 'APERTURA' || r.accionid === 'APERTURA'));
+            
+            let regId = registroApertura ? (registroApertura.id || registroApertura.pisoid) : '';
+
+            let botonesAccion = `
+                <div class="flex justify-center gap-2">
+                    <button type="button" onclick="window.mostrarDetalleApertura('${regId}')" title="Ver Detalle de Apertura" class="text-blue-600 bg-blue-50 border border-blue-200 shadow-sm p-1.5 rounded-lg hover:bg-blue-100 active:scale-95 transition-all">
+                        <span class="material-icons text-sm">visibility</span>
+                    </button>
+                    <button type="button" onclick="window.prepararCierreDesdeHistorial('${numero}', '${diasStr}')" title="Cerrar Local" class="text-red-600 bg-red-50 border border-red-200 shadow-sm p-1.5 rounded-lg hover:bg-red-100 active:scale-95 transition-all">
+                        <span class="material-icons text-sm">logout</span>
+                    </button>
+                </div>`;
+
+            contenidoHTML += `
+                <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
+                    <td class="font-bold text-slate-800 py-3">${numero}</td>
+                    <td class="text-xs text-gray-600 truncate max-w-[150px]">${razon}</td>
+                    <td class="text-xs text-slate-700 font-semibold">${piso}</td>
+                    <td class="text-[10px] text-gray-500">${horario}</td>
+                    <td class="text-center align-middle">${botonesAccion}</td>
+                </tr>`;
+        });
+
+        tBody.innerHTML = contenidoHTML;
+    };
+
+    window.mostrarDetalleApertura = function(id) {
+        if (!id) {
+            window.mostrarToast('Aviso', 'No se encontró el registro detallado de la apertura.', 'warning');
+            return;
+        }
+
+        const registro = registrosData.find(r => String(r.id || r.pisoid) === String(id));
+        if (!registro) return;
+
+        const fechaObj = new Date(registro.datetime);
+        const fechaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleString('es-CO');
+
+        const htmlContenido = `
+            <p><span class="font-bold text-slate-400">LOCAL:</span> <span class="text-slate-800 font-semibold">${registro.numero_local || '---'}</span></p>
+            <p><span class="font-bold text-slate-400">USUARIO:</span> <span class="text-slate-800 font-semibold">${registro.quien_informa || 'N/A'}</span></p>
+            <p><span class="font-bold text-slate-400">FECHA/HORA:</span> <span class="text-slate-800 font-semibold">${fechaStr}</span></p>
+            <p><span class="font-bold text-slate-400">NOVEDAD:</span> <span class="text-slate-800 font-semibold">${registro.novedad || 'SIN NOVEDAD'}</span></p>
+            <p class="border-t pt-2 mt-2"><span class="font-bold text-slate-400">OBSERVACIONES:</span><br><span class="text-slate-700">${registro.observaciones || 'Sin observaciones registradas.'}</span></p>
+        `;
+
+        document.getElementById('contenido-detalle-apertura').innerHTML = htmlContenido;
+        document.getElementById('detalle-apertura-id').value = id;
+        document.getElementById('modal-detalle-apertura').classList.remove('hidden');
+    }
+
     window.renderizarTablaLocales = function() {
         const tBody = document.getElementById('tbody-locales');
         if(!tBody) return;
         
         const isAdmin = window.esAdmin(); 
 
-        // Ocultar o mostrar el botón "NUEVO" según permisos
         const secGestion = document.getElementById('sec-gestion_locales');
         if (secGestion) {
             const btnNuevo = secGestion.querySelector('button[onclick="window.abrirModalLocal()"]');
@@ -1148,7 +1167,6 @@
             let dias = typeof loc === 'string' ? '---' : (loc.dias_semana || loc.dias || '---');
             let id = typeof loc === 'string' ? index : (loc.id || index);
 
-            // Control de acceso a botones
             let botonesAccion = `<span class="text-gray-400 italic text-[10px]">${_T('readOnly')}</span>`;
             
             if (isAdmin) {
@@ -1311,13 +1329,20 @@
         }
     }
 
-    // ================= CARGA DE DATOS Y TABLA HISTORIAL =================
+    // ================= CARGA DE DATOS OPTIMIZADA =================
     window.cargarDatosAPI = async function() {
         try {
-            const res = await fetch(API_ROUTE, {
+            // OPTIMIZACIÓN: Solo traemos los últimos 3 días para que la app no colapse los datos móviles
+            let hace3Dias = new Date();
+            hace3Dias.setDate(hace3Dias.getDate() - 3);
+            let fechaFiltro = hace3Dias.toISOString().split('T')[0];
+
+            const urlOperativa = `${API_ROUTE_BASE}?_limit=5000&datetime_gte=${fechaFiltro}`;
+
+            const res = await fetch(urlOperativa, {
                 method: 'GET',
-                headers: { 'Cache-Control': 'no-cache', 'Accept': 'application/json' },
-                cache: 'no-store'
+                headers: { 'Accept': 'application/json' } 
+                // Se eliminó cache: 'no-store' para que el celular guarde en memoria
             });
             if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
             
@@ -1332,6 +1357,11 @@
             registrosData = arr; 
             window.generarListaBuscador(); 
             window.actualizarDashboard();
+
+            if (!document.getElementById('sec-locales_apertura').classList.contains('hidden')) {
+                window.renderizarLocalesAbiertos();
+            }
+
         } catch (e) {
             console.error("Error obteniendo datos", e);
         }
@@ -1346,76 +1376,84 @@
         if(inputHasta) inputHasta.value = '';
         if(inputFiltroLocal) inputFiltroLocal.value = '';
 
-        window.datosFiltradosActuales = []; // Vaciamos memoria
+        window.datosFiltradosActuales = []; 
         document.getElementById('tabla-historico-body').innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
     }
 
-    window.ejecutarFiltroReportes = function() {
+    // ================= REPORTES POR DEMANDA =================
+    window.ejecutarFiltroReportes = async function() {
         document.getElementById('loader').classList.remove('hidden');
-        setTimeout(() => {
-            window.renderizarTablas();
-            document.getElementById('loader').classList.add('hidden');
-        }, 50);
-    }
 
-    window.renderizarTablas = function() {
-        const tBody = document.getElementById('tabla-historico-body');
-        if(!tBody) return;
-
-        let fechaDesdeInput = document.getElementById('reportes-fecha-desde') ? document.getElementById('reportes-fecha-desde').value : '';
-        let fechaHastaInput = document.getElementById('reportes-fecha-hasta') ? document.getElementById('reportes-fecha-hasta').value : '';
+        let fechaDesde = document.getElementById('reportes-fecha-desde') ? document.getElementById('reportes-fecha-desde').value : '';
+        let fechaHasta = document.getElementById('reportes-fecha-hasta') ? document.getElementById('reportes-fecha-hasta').value : '';
         let filtroLocal = document.getElementById('filtro-reportes-local') ? document.getElementById('filtro-reportes-local').value.toUpperCase() : '';
 
-        if (!fechaDesdeInput && !fechaHastaInput && !filtroLocal) {
+        // Si no hay filtros, no hacemos la petición para no gastar datos
+        if (!fechaDesde && !fechaHasta && !filtroLocal) {
             window.datosFiltradosActuales = [];
-            tBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
+            document.getElementById('tabla-historico-body').innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic font-bold">${_T('useSearchFilters')}</td></tr>`;
+            document.getElementById('loader').classList.add('hidden');
             return;
         }
 
-        let fechaDesde = fechaDesdeInput;
-        let fechaHasta = fechaHastaInput;
-
-        if (fechaDesde && !fechaHasta) {
-            fechaHasta = fechaDesde;
-        } else if (!fechaDesde && fechaHasta) {
-            fechaDesde = fechaHasta;
-        }
-
-        let todosLosDatos = [...registrosData];
-
-        if (fechaDesde) {
-            todosLosDatos = todosLosDatos.filter(r => new Date(r.datetime) >= new Date(fechaDesde + 'T00:00:00'));
-        }
-        if (fechaHasta) {
-            todosLosDatos = todosLosDatos.filter(r => new Date(r.datetime) <= new Date(fechaHasta + 'T23:59:59'));
-        }
-        if (filtroLocal) {
-            todosLosDatos = todosLosDatos.filter(r => {
-                let numLocal = String(r.numero_local || '').toUpperCase();
-                
-                let razon = r.razon_social;
-                if (!razon) {
-                    const locMatch = localesConfigData.find(l => String(l.numero_local).toUpperCase() === numLocal);
-                    razon = locMatch ? locMatch.razon_social : '';
-                }
-                razon = String(razon || '').toUpperCase();
-
-                return numLocal.includes(filtroLocal) || razon.includes(filtroLocal);
+        try {
+            // Construimos la URL pidiéndole al servidor que filtre las fechas (Ahorra MUCHOS Megabytes)
+            let queryUrl = `${API_ROUTE_BASE}?_limit=5000`; 
+            
+            if (fechaDesde) queryUrl += `&datetime_gte=${encodeURIComponent(fechaDesde + 'T00:00:00.000Z')}`;
+            if (fechaHasta) queryUrl += `&datetime_lte=${encodeURIComponent(fechaHasta + 'T23:59:59.999Z')}`;
+            
+            const res = await fetch(queryUrl, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
             });
+            
+            if(!res.ok) throw new Error('Error buscando reportes');
+            let data = await res.json();
+            
+            let arr = [];
+            if (Array.isArray(data)) arr = data;
+            else if (data && Array.isArray(data.data)) arr = data.data;
+            else if (data && Array.isArray(data.success)) arr = data.success;
+            else if (data && typeof data === 'object') arr = Object.values(data).filter(v => typeof v === 'object');
+
+            if (filtroLocal) {
+                arr = arr.filter(r => {
+                    let numLocal = String(r.numero_local || '').toUpperCase();
+                    let razon = r.razon_social;
+                    if (!razon) {
+                        const locMatch = localesConfigData.find(l => String(l.numero_local).toUpperCase() === numLocal);
+                        razon = locMatch ? locMatch.razon_social : '';
+                    }
+                    razon = String(razon || '').toUpperCase();
+                    return numLocal.includes(filtroLocal) || razon.includes(filtroLocal);
+                });
+            }
+
+            arr.sort((a,b) => new Date(b.datetime||0) - new Date(a.datetime||0));
+            window.datosFiltradosActuales = arr;
+            window.renderizarTablasReportes(arr);
+
+        } catch (e) {
+            console.error(e);
+            window.mostrarToast('Error', 'No se pudieron cargar los reportes', 'error');
+        } finally {
+            document.getElementById('loader').classList.add('hidden');
         }
+    }
 
-        todosLosDatos.sort((a,b) => new Date(b.datetime||0) - new Date(a.datetime||0));
-        
-        window.datosFiltradosActuales = todosLosDatos;
+    window.renderizarTablasReportes = function(datos) {
+        const tBody = document.getElementById('tabla-historico-body');
+        if(!tBody) return;
 
-        if (todosLosDatos.length === 0) {
+        if (datos.length === 0) {
             tBody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-400 py-6 italic">${_T('noResultsFilter')}</td></tr>`;
             return;
         }
 
         let contenidoHTML = '';
 
-        todosLosDatos.forEach(r => {
+        datos.forEach(r => {
             const fechaObj = new Date(r.datetime);
             const fechaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleDateString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric'});
             const horaStr = isNaN(fechaObj) ? '---' : fechaObj.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'});
@@ -1455,7 +1493,7 @@
         tBody.innerHTML = contenidoHTML;
     }
 
-    // ================= LÓGICA DEL FORMULARIO Y DÍAS =================
+    // ================= LÓGICA DEL FORMULARIO =================
     window.actualizarInputDias = function() {
         const seleccionados =[];
         document.querySelectorAll('.btn-dia.bg-red-600').forEach(b => {
@@ -1498,7 +1536,7 @@
         window.actualizarInputDias();
     }
 
-    window.prepararFormulario = function(accion, el = null) {
+    window.prepararFormulario = function(accion, el = null, saltarFetch = false) {
         window.limpiarFormulario();
         
         document.getElementById('form-main-title').innerText = `NUEVO REGISTRO: ${accion}`;
@@ -1506,9 +1544,11 @@
         
         window.generarListaBuscador();
 
-        window.cargarDatosAPI().then(() => {
-            window.generarListaBuscador();
-        });
+        if(!saltarFetch) {
+            window.cargarDatosAPI().then(() => {
+                window.generarListaBuscador();
+            });
+        }
 
         const contenedorDias = document.getElementById('contenedor-dias');
         const btnTodosDias = document.getElementById('btn-todos-dias');
@@ -1533,14 +1573,16 @@
     }
 
     window.prepararCierreDesdeHistorial = function(numeroLocal, diasStr) {
-        window.prepararFormulario('CIERRE');
+        window.cerrarModal('modal-detalle-apertura');
+
+        window.prepararFormulario('CIERRE', 'cierre'); 
         
         const inputLocalHidden = document.getElementById('NUMERO_LOCAL');
         const inputLocalBuscador = document.getElementById('BUSCADOR_LOCAL');
         
         inputLocalHidden.value = numeroLocal;
         
-        const localEncontrado = localesConfigData.find(l => l.numero_local === numeroLocal);
+        const localEncontrado = localesConfigData.find(l => String(l.numero_local).toUpperCase() === String(numeroLocal).toUpperCase());
         if (localEncontrado) {
             let num = localEncontrado.numero_local;
             let razon = localEncontrado.razon_social;
@@ -1594,20 +1636,48 @@
         }
     }
 
+    // ================= FUNCIONES DE RASTREO GPS =================
+    window.iniciarRastreoGPS = function() {
+        if(navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                pos => {
+                    globalGpsPosition = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+                    const inputGps = document.getElementById('GPS');
+                    if (inputGps && inputGps.value === "Obteniendo...") {
+                        inputGps.value = globalGpsPosition;
+                    }
+                },
+                err => { console.warn("Aviso GPS:", err); },
+                { enableHighAccuracy: true, maximumAge: 60000, timeout: 15000 }
+            );
+        }
+    };
+
     window.obtenerGPS = function() {
         const inputGps = document.getElementById('GPS');
+        
+        if (globalGpsPosition) {
+            inputGps.value = globalGpsPosition;
+            return;
+        }
+
         inputGps.value = "Obteniendo...";
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                pos => { inputGps.value = `${pos.coords.latitude}, ${pos.coords.longitude}`; },
+                pos => { 
+                    globalGpsPosition = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+                    inputGps.value = globalGpsPosition; 
+                },
                 err => { 
                     inputGps.value = ""; 
                     if(err.code === err.PERMISSION_DENIED) {
-                        window.mostrarToast('Alerta GPS', 'El GPS es un campo obligatorio. Permita la ubicación.', 'error');
-                        alert("El GPS es un caracter obligatorio. Por favor, habilite los permisos de ubicación en su navegador para poder continuar.");
+                        window.mostrarToast('Alerta GPS', 'El GPS es obligatorio. Por favor, permita la ubicación.', 'error');
+                        alert("El GPS es un caracter obligatorio. Por favor, habilite los permisos de ubicación en su navegador.");
+                    } else {
+                        window.mostrarToast('Alerta GPS', 'Demasiado tiempo. Intente pulsar el botón nuevamente.', 'warning');
                     }
                 },
-                { timeout: 10000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 120000 }
             );
         } else {
             inputGps.value = "";
@@ -1751,7 +1821,9 @@
                 }
             }
 
-            const res = await fetch(API_ROUTE, {
+            const postRoute = API_ROUTE_BASE;
+
+            const res = await fetch(postRoute, {
                 method: 'POST', 
                 headers: { 'Content-Type':'application/json', 'CSRF-Token': csrfToken, 'Accept': 'application/json' }, 
                 body: JSON.stringify(payload)
@@ -1762,12 +1834,21 @@
                 throw new Error(`Detalle del servidor: ${errorDB}`);
             }
 
+            registrosData.push(payload);
+            
+            window.actualizarDashboard();
+            if (!document.getElementById('sec-locales_apertura').classList.contains('hidden')) {
+                window.renderizarLocalesAbiertos();
+            }
+
             window.mostrarToast('Éxito', 'Registro guardado correctamente.', 'success');
             
-            await window.cargarDatosAPI(); 
-            
             const accionActual = document.getElementById('ACCION').value; 
-            window.prepararFormulario(accionActual, accionActual.toLowerCase()); 
+            window.prepararFormulario(accionActual, accionActual.toLowerCase(), true); 
+            
+            setTimeout(() => {
+                window.cargarDatosAPI();
+            }, 1500);
             
             const divScrollable = document.getElementById('scrollable-content');
             if (divScrollable) divScrollable.scrollTop = 0;
@@ -1869,6 +1950,8 @@
     }
 
     window.verImagenes = function(id) {
+        window.cerrarModal('modal-detalle-apertura');
+
         const registro = registrosData.find(r => String(r.id || r.pisoid) === String(id));
         if(!registro) return;
 
